@@ -4,6 +4,7 @@ import {
     Typography,
   } from "@mui/material";
   import React from "react";
+import Logo from "./Logo";
   
   const MainHeader: React.FC = () => {
     return (
@@ -11,7 +12,9 @@ import {
         <Box sx={{ backgroundColor: "secondary.main" }}>
            
             <Stack direction={"row"} alignItems={"center"} justifyContent={"center"} sx={{ height: 62 }}>
-            
+            <Box marginLeft={10}>
+                <Logo size={48}/>
+            </Box>
               <Box sx={{flex:1}}>
                 <Typography variant="h6" align="center" color="white">Date-Time</Typography>
               </Box>
