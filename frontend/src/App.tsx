@@ -1,7 +1,7 @@
-import React from 'react'; 
-import { BrowserRouter,  useRoutes } from "react-router-dom";
-import { routes } from './routes';
-
+import React from "react";
+import { BrowserRouter, useRoutes } from "react-router-dom";
+import { routes } from "./routes";
+import AppTheme from "./theme/themeProvider";
 
 const AppRoutes = () => {
   const routeElements = useRoutes(routes);
@@ -10,9 +10,11 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <AppTheme>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter> 
+    </AppTheme>
   );
 }
 
