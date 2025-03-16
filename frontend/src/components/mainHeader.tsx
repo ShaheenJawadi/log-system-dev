@@ -5,13 +5,14 @@ import {
   } from "@mui/material";
   import React from "react";
 import Logo from "./Logo";
+import { headerHeight } from "../utils/constatnts";
   
   const MainHeader: React.FC = () => {
     return (
       <div>
         <Box sx={{ backgroundColor: "secondary.main" }}>
            
-            <Stack direction={"row"} alignItems={"center"} justifyContent={"center"} sx={{ height: 62 }}>
+            <Stack direction={"row"} alignItems={"center"} justifyContent={"center"} sx={{ height: headerHeight }}>
             <Box marginLeft={10}>
                 <Logo size={48}/>
             </Box>
