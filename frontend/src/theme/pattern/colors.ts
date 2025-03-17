@@ -25,9 +25,9 @@ const DefaultPalette = () => {
       contrastText: '#FFF',
     },
     error: {
-      light: '#ff4569',
-      main: '#ff1744',
-      dark: '#b2102f',
+      light: '#FF7A88', 
+      main: '#F84960',
+      dark: '#D03E50',  
       contrastText: '#FFF',
     },
     warning: {

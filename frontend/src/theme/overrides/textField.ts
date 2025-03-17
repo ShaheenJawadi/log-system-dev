@@ -28,11 +28,7 @@ const TextFieldOverrides = (theme: Theme) => {
                 notchedOutline: {
                     borderColor: theme.palette.divider,
                 },
-                focused: {
-                    '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: theme.palette.primary.main, 
-                    },
-                },
+              
                 error: {
                     '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: theme.palette.error.main,
@@ -43,7 +39,8 @@ const TextFieldOverrides = (theme: Theme) => {
         MuiInputLabel: {
             styleOverrides: {
                 root: {
-                    color: theme.palette.primary.main,
+                    color: theme.palette.secondary.main,
+                    
                     '&.Mui-focused': {
                         color: theme.palette.secondary.main,
                     },
