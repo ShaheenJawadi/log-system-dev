@@ -1,61 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { LogEntry } from "../../types/logs";
+import { canvasLogTable_MARGIN as MARGIN,canvasLogTable_ROW_HEIGHT as ROW_HEIGHT,canvasLogTable_statusRows as statusRows} from "../../utils/constatnts";
 
-const DailyDriverLogTab = () => {
+const DailyDriverLogTab = ({logData}:{logData: LogEntry[]}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const logData: LogEntry[] = [
-    { type: "off", start: 0, end: 2.75, remark: "Resting in Little Rock, AR" },
-    { type: "sb", start: 2.75, end: 5, remark: "Sleep break before driving" },
-    { type: "on", start: 5, end: 6, remark: "Loading cargo at the dock" },
-    {
-      type: "driving",
-      start: 6,
-      end: 8.25,
-      remark: "Heading towards Corsicana, TX",
-    },
-    { type: "on", start: 8.25, end: 9, remark: "Quick paperwork & refuel" },
-    {
-      type: "driving",
-      start: 9,
-      end: 11.25,
-      remark: "On the road to Houston, TX",
-    },
-    {
-      type: "on",
-      start: 11.25,
-      end: 12,
-      remark: "Dinner break at a truck stop",
-    },
-    {
-      type: "driving",
-      start: 12,
-      end: 14.75,
-      remark: "Pushing towards Orange, TX",
-    },
-    {
-      type: "off",
-      start: 14.75,
-      end: 24,
-      remark: "Done for the day, off-duty",
-    },
-  ];
-
-  const MARGIN = {
-    LEFT: 160,
-    RIGHT: 80,
-    TOP: 40,
-    BOTTOM: 150,
-  };
-
-  const ROW_HEIGHT = 35;
-  const statusRows = [
-    { id: "off", label: "1. OFF DUTY" },
-    { id: "sb", label: "2. SLEEPER BERTH" },
-    { id: "driving", label: "3. DRIVING" },
-    { id: "on", label: "4. ON DUTY (NOT DRIVING)" },
-  ];
-
+ 
+ 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
