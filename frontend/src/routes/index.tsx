@@ -17,6 +17,6 @@ export const routes: RouteObject[] = [
   ,
   {
     path: "/my-logs",
-    element:<DriverLog/>,  
+    element:<MainPageContainer><DriverLog/></MainPageContainer>,  
   } 
 ];
