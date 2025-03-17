@@ -2,6 +2,7 @@ import { RouteObject } from "react-router-dom";
 import Home from "../pages/home";
 import MainPageContainer from "../components/mainPagesContainer";
 import NewTrip from "../pages/newTrip";
+import DriverLog from "../pages/driverlog";
  
 
 export const routes: RouteObject[] = [
@@ -13,5 +14,9 @@ export const routes: RouteObject[] = [
     path: "/new-trip",
     element:    <MainPageContainer><NewTrip/></MainPageContainer>,  
   } 
-  
+  ,
+  {
+    path: "/my-logs",
+    element:<DriverLog/>,  
+  } 
 ];
