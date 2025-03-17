@@ -1,12 +1,10 @@
-
-import { Container } from "@mui/material";
+import { Box, Container, Stack } from "@mui/material";
 import DailyDriverLogTab from "../components/driver_logs/dailyLogTab";
 import { LogHeaderSection } from "../components/driver_logs/dailyRecord";
 import { LogEntry } from "../types/logs";
 
 const DriverLog = () => {
-  
- const logData: LogEntry[] = [
+  const logData: LogEntry[] = [
     { type: "off", start: 0, end: 2.75, remark: "Resting in Little Rock, AR" },
     { type: "sb", start: 2.75, end: 5, remark: "Sleep break before driving" },
     { type: "on", start: 5, end: 6, remark: "Loading cargo at the dock" },
@@ -42,12 +40,13 @@ const DriverLog = () => {
       remark: "Done for the day, off-duty",
     },
   ];
- 
+
   return (
     <Container>
-    <LogHeaderSection/>
-      <DailyDriverLogTab logData={logData}/>
-    </Container >
+      <LogHeaderSection />
+
+      <DailyDriverLogTab logData={logData} />
+    </Container>
   );
 };
 
