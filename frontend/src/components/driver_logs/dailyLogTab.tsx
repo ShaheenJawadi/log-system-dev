@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { LogEntry } from "../../types/logs";
 import { canvasLogTable_MARGIN as MARGIN,canvasLogTable_ROW_HEIGHT as ROW_HEIGHT,canvasLogTable_statusRows as statusRows} from "../../utils/constatnts";
+import { Box } from "@mui/material";
 
 const DailyDriverLogTab = ({logData}:{logData: LogEntry[]}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -9,8 +10,13 @@ const DailyDriverLogTab = ({logData}:{logData: LogEntry[]}) => {
  
   useEffect(() => {
     const canvas = canvasRef.current;
+  
     if (!canvas) return;
-
+    const parent = canvas.parentElement;
+    if (canvas && parent) { 
+        canvas.width = parent.clientWidth; 
+        canvas.height = 350;  
+      }
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -229,19 +235,21 @@ const DailyDriverLogTab = ({logData}:{logData: LogEntry[]}) => {
 
       ctx.restore();
     }
-  }, [logData]);
-
+  }, [logData]); 
   return (
-    <div>
+    <Box justifyContent="center" display="flex" width="100%">
+ 
       <canvas
         ref={canvasRef}
-        width={900}
-        height={300}
         style={{
-          height: "auto",
+          width: "100%", 
+          height: "auto", 
+          display: "block", 
         }}
       />
-    </div>
+ 
+  </Box>
+  
   );
 };
 

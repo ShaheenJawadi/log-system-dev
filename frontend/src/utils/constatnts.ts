@@ -2,7 +2,7 @@ export const headerHeight = 62;
 
 //  daily logs drawing constants
 export const canvasLogTable_MARGIN = {
-    LEFT: 160,
+    LEFT: 100,
     RIGHT: 80,
     TOP: 40,
     BOTTOM: 150,
