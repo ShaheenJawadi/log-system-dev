@@ -1,6 +1,6 @@
 import { Box, Container, Stack } from "@mui/material";
 import DailyDriverLogTab from "../components/driver_logs/dailyLogTab";
-import { LogHeaderSection } from "../components/driver_logs/dailyRecord";
+import { HourRecapSection, LogHeaderSection, ShippingSection } from "../components/driver_logs/dailyRecord";
 import { LogEntry } from "../types/logs";
 
 const DriverLog = () => {
@@ -46,6 +46,8 @@ const DriverLog = () => {
       <LogHeaderSection />
 
       <DailyDriverLogTab logData={logData} />
+      <ShippingSection />
+      <HourRecapSection/>
     </Container>
   );
 };

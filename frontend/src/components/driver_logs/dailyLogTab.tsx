@@ -74,11 +74,12 @@ const DailyDriverLogTab = ({logData}:{logData: LogEntry[]}) => {
       ctx.textBaseline = "middle";
 
       if (label) {
+        ctx.font = "bold 15px Arial";
         ctx.textAlign = "right";
         ctx.fillText(label, left - 10, top + height / 2);
         ctx.textAlign = "center";
       }
-
+      ctx.font = "bold 10px Arial";
       ctx.fillText("MID", left, top - 15);
       ctx.fillText("NIGHT", left, top - 5);
 

@@ -1,3 +1,4 @@
+import { Margin } from "@mui/icons-material";
 import {
   styled,
   Box,
@@ -14,12 +15,30 @@ const StyledBoxWithUnderLine = styled(Box)(({ theme }) => ({
   "&.smaller": {
     minHeight: 20,
   },
+  "&.spec": {
+    marginTop: 25,
+  },
 }));
 
 const StyledBoxWithBorder = styled(Box)(({ theme }) => ({
   border: `2px solid #000`,
   padding: theme.spacing(1),
   minHeight: 40,
+}));
+
+const StyledShippingBox = styled(Box)(({ theme }) => ({
+  borderBottom: `4px solid #000`,
+  borderLeft: `4px solid #000`,
+  padding: theme.spacing(1),
+  position: "relative",
+  paddingBottom: 25,
+  marginBottom: 20,
+}));
+
+const StyledShippingSep = styled(Box)(({ theme }) => ({
+  borderBottom: `2px solid #000`,
+
+  width: 150,
 }));
 
 export const LogHeaderSection = () => {
@@ -173,5 +192,185 @@ const SecondSec = () => {
         </Stack>
       </Grid>
     </Grid>
+  );
+};
+
+export const ShippingSection = () => {
+  return (
+    <Box>
+      <StyledShippingBox>
+        <Stack paddingTop={10} spacing={3}>
+          <Typography variant="h6" fontWeight={"bold"}>
+            Shipping <br /> Documents:
+          </Typography>
+          <StyledShippingSep />
+
+          <Stack spacing={5} direction={"row"}>
+            <Typography variant="body2" minWidth={150} fontWeight={"bold"}>
+              DVL or Manifest No. <br /> or
+            </Typography>
+
+            <Typography variant="body2">{/* TT */}</Typography>
+          </Stack>
+          <StyledShippingSep />
+          <Stack spacing={5} direction={"row"}>
+            <Typography variant="body2" minWidth={150} fontWeight={"bold"}>
+              {" Shipper & Commodity"}
+            </Typography>
+
+            <Typography variant="body2">{/* TT */}</Typography>
+          </Stack>
+
+          <Typography
+            paddingTop={4}
+            variant="body2"
+            textAlign={"center"}
+            fontWeight={"bold"}
+          >
+            Enter name of place you reported and where released from work and
+            when and where each change of duty occurred.{" "}
+          </Typography>
+        </Stack>
+        <Stack
+          direction={"row"}
+          position={"absolute"}
+          bottom={-10}
+          width={"100%"}
+          right={0}
+          alignContent={"center"}
+          justifyContent={"center"}
+        >
+          <Box sx={{ backgroundColor: "white" }} paddingX={5}>
+            <Typography
+              variant="body2"
+              textAlign={"center"}
+              fontWeight={"bold"}
+            >
+              Use time standard of home terminal.
+            </Typography>
+          </Box>
+        </Stack>
+      </StyledShippingBox>
+    </Box>
+  );
+};
+
+export const HourRecapSection = () => {
+  return (
+    <Box>
+      <Grid container spacing={2}>
+        <Grid size={1.09}>
+          <Typography variant="body2" fontWeight={"bold"}>
+            Recap: Complete at end of day
+          </Typography>
+        </Grid>
+        <Grid size={1.09}>
+          <StyledBoxWithUnderLine className="spec"></StyledBoxWithUnderLine>
+          <Typography variant="body2" fontWeight={"bold"}>
+            On duty hours today, Total lines 3 & 4
+          </Typography>
+        </Grid>
+        <Grid size={1.09}>
+          <Typography variant="body2" fontWeight={"bold"}>
+            70 Hour/ 8 Day Drivers
+          </Typography>
+        </Grid>
+        <Grid size={1.09}>
+          <StyledBoxWithUnderLine className="spec">
+            <Stack direction={"row"}>
+              <Typography variant="body2" fontWeight={"bold"}>
+                A.
+              </Typography>
+              <Typography>{/* TT */}</Typography>
+            </Stack>
+          </StyledBoxWithUnderLine>
+          <Typography variant="body2" fontWeight={"bold"}>
+            A. Total hours on duty last 7 days including today.
+          </Typography>
+        </Grid>
+
+        <Grid size={1.09}>
+          <StyledBoxWithUnderLine className="spec">
+            <Stack direction={"row"}>
+              <Typography variant="body2" fontWeight={"bold"}>
+                B.
+              </Typography>
+              <Typography>{/* TT */}</Typography>
+            </Stack>
+          </StyledBoxWithUnderLine>
+          <Typography variant="body2" fontWeight={"bold"}>
+            B. Total hours available tomorrow 70 hr. minus A*.
+          </Typography>
+        </Grid>
+
+        <Grid size={1.09}>
+          <StyledBoxWithUnderLine className="spec">
+            <Stack direction={"row"}>
+              <Typography variant="body2" fontWeight={"bold"}>
+                C.
+              </Typography>
+              <Typography>{/* TT */}</Typography>
+            </Stack>
+          </StyledBoxWithUnderLine>
+          <Typography variant="body2" fontWeight={"bold"}>
+            C. Total hours on duty last 5 days including today.
+          </Typography>
+        </Grid>
+        <Grid size={1.09}>
+          <Typography variant="body2" fontWeight={"bold"}>
+            60 Hour/ 7 Day Drivers
+          </Typography>
+        </Grid>
+
+        <Grid size={1.09}>
+          <StyledBoxWithUnderLine className="spec">
+            <Stack direction={"row"}>
+              <Typography variant="body2" fontWeight={"bold"}>
+                A.
+              </Typography>
+              <Typography>{/* TT */}</Typography>
+            </Stack>
+          </StyledBoxWithUnderLine>
+          <Typography variant="body2" fontWeight={"bold"}>
+            A. Total hours on duty last 8 days including today.
+          </Typography>
+        </Grid>
+
+        <Grid size={1.09}>
+          <StyledBoxWithUnderLine className="spec">
+            <Stack direction={"row"}>
+              <Typography variant="body2" fontWeight={"bold"}>
+                B.
+              </Typography>
+              <Typography>{/* TT */}</Typography>
+            </Stack>
+          </StyledBoxWithUnderLine>
+          <Typography variant="body2" fontWeight={"bold"}>
+            B. Total hours available tomorrow 60 hr. minus A*
+          </Typography>
+        </Grid>
+
+        <Grid size={1.09}>
+          <StyledBoxWithUnderLine className="spec">
+            <Stack direction={"row"}>
+              <Typography variant="body2" fontWeight={"bold"}>
+                C.
+              </Typography>
+              <Typography>{/* TT */}</Typography>
+            </Stack>
+          </StyledBoxWithUnderLine>
+          <Typography variant="body2" fontWeight={"bold"}>
+            C. Total hours on duty last 7 days including today.
+          </Typography>
+        </Grid>
+
+        <Grid size={1.09}>
+          <Typography variant="body2" fontWeight={"bold"}>
+            *If you took <br /> 34 <br /> consecutive hours off duty you have
+            60/70 hours avaialble
+          </Typography>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
