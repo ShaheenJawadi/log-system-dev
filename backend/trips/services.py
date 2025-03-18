@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 import polyline
 
+from driver_logs.models import LogEntry, LogDay
 from trips.models import Location, RouteStop
 
 
@@ -33,6 +34,7 @@ class RouteService:
         self.trip.polyline = encoded_polyline
         self.trip.save()
         self._calculate_stops(route_data)
+        self._generate_log_entries()
 
         return self.trip
 
@@ -174,3 +176,102 @@ class RouteService:
             arrival_time=arrival_time,
             departure_time=departure_time
         )
+
+
+
+
+    def _generate_log_entries(self):
+        stops = self.trip.stops.all().order_by('arrival_time')
+        current_date = stops[0].arrival_time.date()
+        current_log_day = LogDay.objects.create(trip=self.trip, date=current_date)
+        previous_entry_end = 0  # Midnight
+
+        for i, stop in enumerate(stops):
+            stop_date = stop.arrival_time.date()
+
+            if stop_date != current_date:
+                if previous_entry_end < 24 * 60:
+                    LogEntry.objects.create(
+                        log_day=current_log_day,
+                        type='off',
+                        start=previous_entry_end,
+                        end=24 * 60,
+                        remark="Off duty"
+                    )
+
+                current_date = stop_date
+                current_log_day = LogDay.objects.create(trip=self.trip, date=current_date)
+                previous_entry_end = 0
+
+            start_minutes = (stop.arrival_time.hour * 60) + stop.arrival_time.minute
+
+            if start_minutes > previous_entry_end:
+                LogEntry.objects.create(
+                    log_day=current_log_day,
+                    type='driving',
+                    start=previous_entry_end,
+                    end=start_minutes,
+                    remark=f"Driving to {stop.location.address}"
+                )
+
+            if stop.stop_type == 'rest':
+                end_minutes = ((stop.departure_time.hour * 60) + stop.departure_time.minute)
+
+                if end_minutes <= start_minutes:
+                    LogEntry.objects.create(
+                        log_day=current_log_day,
+                        type='sb',
+                        start=start_minutes,
+                        end=24 * 60,
+                        remark="Rest period"
+                    )
+
+                    next_date = current_date + timedelta(days=1)
+                    next_log_day = LogDay.objects.create(trip=self.trip, date=next_date)
+
+                    LogEntry.objects.create(
+                        log_day=next_log_day,
+                        type='sb',
+                        start=0,
+                        end=end_minutes,
+                        remark="Rest period (continued)"
+                    )
+
+                    current_date = next_date
+                    current_log_day = next_log_day
+                    previous_entry_end = end_minutes
+                else:
+                    LogEntry.objects.create(
+                        log_day=current_log_day,
+                        type='sb',
+                        start=start_minutes,
+                        end=end_minutes,
+                        remark="Rest period"
+                    )
+                    previous_entry_end = end_minutes
+
+            elif stop.stop_type in ['pickup', 'dropoff', 'fuel']:
+                end_minutes = ((stop.departure_time.hour * 60) + stop.departure_time.minute)
+                activity = {
+                    'pickup': 'Loading',
+                    'dropoff': 'Unloading',
+                    'fuel': 'Fueling'
+                }[stop.stop_type]
+
+                LogEntry.objects.create(
+                    log_day=current_log_day,
+                    type='on',
+                    start=start_minutes,
+                    end=end_minutes,
+                    remark=f"{activity} at {stop.location.address}"
+                )
+                previous_entry_end = end_minutes
+
+        if previous_entry_end < 24 * 60:
+            LogEntry.objects.create(
+                log_day=current_log_day,
+                type='off',
+                start=previous_entry_end,
+                end=24 * 60,
+                remark="Off duty"
+            )
