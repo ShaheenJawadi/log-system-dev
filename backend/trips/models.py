@@ -22,6 +22,7 @@ class Trip(models.Model):
     current_cycle_hours = models.FloatField(help_text="Current cycle hours used")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
     created_at = models.DateTimeField(auto_now_add=True)
+    polyline = models.TextField(null=True, blank=True)
 
 
 class RouteStop(models.Model):

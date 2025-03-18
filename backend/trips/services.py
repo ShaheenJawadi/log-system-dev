@@ -1,6 +1,8 @@
 import requests
 from datetime import datetime, timedelta
 
+import polyline
+
 from trips.models import Location, RouteStop
 
 
@@ -27,9 +29,16 @@ class RouteService:
         ]
 
         route_data = self._get_osrm_route(waypoints)
+        encoded_polyline = self._encode_polyline(route_data['geometry']['coordinates'])
+        self.trip.polyline = encoded_polyline
+        self.trip.save()
         self._calculate_stops(route_data)
 
         return self.trip
+
+    def _encode_polyline(self, coordinates):
+        points = [[coord[1], coord[0]] for coord in coordinates]
+        return polyline.encode(points)
 
     def _get_osrm_route(self, waypoints):
         waypoints_str = ";".join([f"{lon},{lat}" for lon, lat in waypoints])
