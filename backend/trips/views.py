@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import Trip, Location
 from .serializers import (TripSerializer)
+from .services import RouteService
 
 
 class TripViewSet(viewsets.ModelViewSet):
@@ -47,4 +48,14 @@ class TripViewSet(viewsets.ModelViewSet):
 
 
         serializer = TripSerializer(trip)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        route_service = RouteService(trip)
+        planned_trip = route_service.plan_route()
+
+        response_data = {
+            'trip': planned_trip,
+        }
+
+        return response_data
+
+
