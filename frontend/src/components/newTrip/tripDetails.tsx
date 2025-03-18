@@ -1,4 +1,6 @@
 import NearMeIcon from "@mui/icons-material/NearMe";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
+import FlagIcon from "@mui/icons-material/Flag";
 import {
   styled,
   Box,
@@ -8,9 +10,9 @@ import {
   Button,
   InputAdornment,
   Typography,
+  Autocomplete,
 } from "@mui/material";
-import MyLocationIcon from "@mui/icons-material/MyLocation";
-import FlagIcon from "@mui/icons-material/Flag";
+
 const StyledBoxContainer = styled(Box)(({ theme }) => ({
   backgroundColor: alpha("#6f5157", 0.4),
   color: theme.palette.primary.contrastText,
@@ -26,60 +28,110 @@ const StyledBoxContainer = styled(Box)(({ theme }) => ({
   backdropFilter: "blur(2px)",
 }));
 
-const TripDetails = () => {
+interface Location {
+  display_name: string;
+  lat: string;
+  lon: string;
+}
+
+interface TripDetailsProps {
+  setCurrentLocation: (location: Location | null) => void;
+  setPickup: (location: Location | null) => void;
+  setDropoff: (location: Location | null) => void;
+  setSearchQuery: (query: string) => void;
+  suggestions: Location[];
+  isFormValid: boolean;
+}
+
+const TripDetails: React.FC<TripDetailsProps> = ({
+  setCurrentLocation,
+  setPickup,
+  setDropoff,
+  setSearchQuery,
+  suggestions,
+  isFormValid,
+}) => {
   return (
     <StyledBoxContainer>
       <Stack spacing={4}>
         <Box>
-            <Typography variant="h5" textAlign={"center"} color="secondary">Start a new trip</Typography>
+          <Typography variant="h5" textAlign="center" color="secondary">
+            Start a new trip
+          </Typography>
         </Box>
-        <Box>
-          <TextField
-            slotProps={{
-              input: {
+
+        <Autocomplete
+          options={suggestions}
+          getOptionLabel={(option) => option.display_name}
+          onInputChange={(_, value) => setSearchQuery(value)}
+          onChange={(_, value) => setCurrentLocation(value)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Current Location"
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
                 startAdornment: (
                   <InputAdornment position="start">
                     <MyLocationIcon color="error" />
                   </InputAdornment>
                 ),
-              },
-            }}
-            label="Current Location"
-            variant="outlined"
-          />
-        </Box>
+              }}
+            />
+          )}
+        />
 
-        <Box>
-          <TextField
-            slotProps={{
-              input: {
+        <Autocomplete
+          options={suggestions}
+          getOptionLabel={(option) => option.display_name}
+          onInputChange={(_, value) => setSearchQuery(value)}
+          onChange={(_, value) => setPickup(value)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Pickup location"
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
                 startAdornment: (
                   <InputAdornment position="start">
                     <NearMeIcon color="error" />
                   </InputAdornment>
                 ),
-              },
-            }}
-            label="Pickup location"
-            variant="outlined"
-          />
-        </Box>
-        <Box>
-          <TextField
-            slotProps={{
-              input: {
+              }}
+            />
+          )}
+        />
+
+        <Autocomplete
+          options={suggestions}
+          getOptionLabel={(option) => option.display_name}
+          onInputChange={(_, value) => setSearchQuery(value)}
+          onChange={(_, value) => setDropoff(value)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Dropoff location"
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
                 startAdornment: (
                   <InputAdornment position="start">
                     <FlagIcon color="error" />
                   </InputAdornment>
                 ),
-              },
-            }}
-            label="Dropoff location"
-            variant="outlined"
-          />
-        </Box>
-        <Button size="large" variant="contained" color="primary">
+              }}
+            />
+          )}
+        />
+
+        <Button
+          size="large"
+          variant="contained"
+          color="primary"
+          disabled={!isFormValid}
+        >
           Generate an optimized route
         </Button>
       </Stack>
