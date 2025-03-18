@@ -40,7 +40,8 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'trips'
+    'trips',
+    'driver_logs'
 ]
 
 MIDDLEWARE = [
