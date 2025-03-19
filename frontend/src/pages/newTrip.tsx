@@ -11,6 +11,7 @@ import { useMap } from "react-leaflet";
 import { TripDetailsRequest, TripLocation } from "../types/trip";
 import { decode } from '@mapbox/polyline';
 import * as tripService from '../services/tripServices';
+import axios from "axios";
 const markerIcon = (color: string) =>
   L.divIcon({
     className: "custom-marker",
@@ -41,22 +42,35 @@ const NewTrip: React.FC = () => {
  
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
+    const delayDebounceFn = setTimeout(async () => {
       if (searchQuery.length > 4) {
-        fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            setSuggestions(
-              data.map((item: any) => ({
-                address: item.display_name,
-                latitude: parseFloat(item.lat),
-                longitude: parseFloat(item.lon),
-              }))
-            );
-          })
-          .catch((err) => console.error("Error fetching location data:", err));
+
+        try {
+          const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+            params: {
+              format: 'json',
+              q: searchQuery,
+            },
+            headers: {
+              'Accept-Language': 'en', 
+            },
+          });
+      
+          console.log(response.data);
+          setSuggestions(
+            response.data.map((item: any) => ({
+              address: item.display_name,
+              latitude: parseFloat(item.lat),
+              longitude: parseFloat(item.lon),
+            }))
+          );
+
+           
+        } catch (error) {
+          console.error("Error fetching location data:", error)
+        }
+        
+   
       } else {
         setSuggestions([]);
       }
