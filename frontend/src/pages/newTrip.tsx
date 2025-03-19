@@ -34,18 +34,20 @@ const NewTrip: React.FC = () => {
   const [suggestions, setSuggestions] = useState<Location[]>([]);
 
   useEffect(() => {
-    if (searchQuery.length > 2) {
-      fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          setSuggestions(data);
-        })
-        .catch((err) => console.error("Error fetching location data:", err));
-    } else {
-      setSuggestions([]);
-    }
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery.length > 4) {
+        fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
+        )
+          .then((res) => res.json())
+          .then((data) => setSuggestions(data))
+          .catch((err) => console.error("Error fetching location data:", err));
+      } else {
+        setSuggestions([]);
+      }
+    }, 1200);
+  
+    return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
   const isFormValid = !!(
