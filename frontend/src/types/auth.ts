@@ -21,6 +21,6 @@ export type LoginCredentials = {
 
 
   export type Token = {
-    refresh:string;
+    refresh?:string;
     access:string;
   }
