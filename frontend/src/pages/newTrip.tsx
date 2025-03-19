@@ -1,17 +1,31 @@
 import { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import TripDetails from "../components/newTrip/tripDetails";
-import { headerHeight } from "../utils/constatnts";
-
+import { headerHeight } from "../utils/constatnts"; 
+import L from "leaflet"; 
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import ReactDOMServer from "react-dom/server"; 
 interface Location {
   display_name: string;
   lat: string;
   lon: string;
 }
+const markerIcon = (color: string) =>
+  L.divIcon({
+    className: "custom-marker",
+    html: ReactDOMServer.renderToString(
+      <LocationOnIcon style={{ fontSize: 36, color: color }} />
+    ),
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+  });
 
 const NewTrip: React.FC = () => {
+
+  const theme = useTheme();
+  
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [pickup, setPickup] = useState<Location | null>(null);
   const [dropoff, setDropoff] = useState<Location | null>(null);
@@ -69,19 +83,20 @@ const NewTrip: React.FC = () => {
               parseFloat(currentLocation.lat),
               parseFloat(currentLocation.lon),
             ]}
+            icon={markerIcon(theme.palette.error.main)}
           >
             <Popup>Current Location: {currentLocation.display_name}</Popup>
           </Marker>
         )}
 
         {pickup && (
-          <Marker position={[parseFloat(pickup.lat), parseFloat(pickup.lon)]}>
+          <Marker icon={markerIcon(theme.palette.secondary.main)} position={[parseFloat(pickup.lat), parseFloat(pickup.lon)]}>
             <Popup>Pickup: {pickup.display_name}</Popup>
           </Marker>
         )}
 
         {dropoff && (
-          <Marker position={[parseFloat(dropoff.lat), parseFloat(dropoff.lon)]}>
+          <Marker icon={markerIcon(theme.palette.primary.main)} position={[parseFloat(dropoff.lat), parseFloat(dropoff.lon)]}>
             <Popup>Dropoff: {dropoff.display_name}</Popup>
           </Marker>
         )}

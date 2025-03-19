@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 const StyledBoxContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: alpha("#6f5157", 0.4),
+  backgroundColor: alpha("#1f2537", 0.4),
   color: theme.palette.primary.contrastText,
   padding: theme.spacing(4),
   borderRadius: theme.shape.borderRadius,
@@ -55,7 +55,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
     <StyledBoxContainer>
       <Stack spacing={4}>
         <Box>
-          <Typography variant="h5" textAlign="center" color="secondary">
+          <Typography variant="h5" textAlign="center" fontWeight={"bold"} color="white">
             Start a new trip
           </Typography>
         </Box>
@@ -96,7 +96,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
                 ...params.InputProps,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <NearMeIcon color="error" />
+                    <NearMeIcon color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -118,7 +118,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
                 ...params.InputProps,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <FlagIcon color="error" />
+                    <FlagIcon color="primary" />
                   </InputAdornment>
                 ),
               }}
