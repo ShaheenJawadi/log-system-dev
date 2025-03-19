@@ -4,3 +4,12 @@ export type LogEntry = {
   end: number;
   remark?: string;
 }
+
+
+ 
+export type LogDay = {
+  id: number;
+  trip: number;
+  date: string;
+  entries: LogEntry[];
+};

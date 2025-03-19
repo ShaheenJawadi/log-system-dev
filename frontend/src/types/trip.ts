@@ -1,3 +1,5 @@
+import { LogDay } from "./logs";
+
 export type TripLocation = {
     address: string;
     latitude: number;
@@ -12,22 +14,33 @@ export type TripDetailsRequest  ={
     status: 'planned' | 'in_progress' | 'completed';  
 }
 
-const tripData: TripDetailsRequest = {
-    current_location: {
-        address: '123 Street Name',
-        latitude: 12.34,
-        longitude: 56.78,
-    },
-    pickup_location: {
-        address: '456 Pickup St',
-        latitude: 12.56,
-        longitude: 56.89,
-    },
-    dropoff_location: {
-        address: '789 Dropoff Ave',
-        latitude: 12.78,
-        longitude: 56.90,
-    },
-    current_cycle_hours: 5.5,
-    status: 'planned',
-};
+
+
+
+export type Trip = {
+    id: number;
+    current_location_details: TripLocation;
+    pickup_location_details: TripLocation;
+    dropoff_location_details: TripLocation;
+    current_cycle_hours: number;
+    status: string;
+    created_at: string;
+    polyline: string; 
+  };
+
+  export type Stop = {
+    id: number;
+    location_details: TripLocation;
+    stop_type: 'pickup' | 'dropoff';
+    arrival_time: string;
+    departure_time: string;
+    trip: number;
+    location: number;
+  };
+  
+
+export type TripData = {
+    trip: Trip;
+    log_days: LogDay[];
+    stops: Stop[];
+  };
