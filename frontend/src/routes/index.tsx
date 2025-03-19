@@ -7,32 +7,34 @@ import LoginPage from "../pages/login";
 import RegisterPage from "../pages/register";
 import AuthPageHolder from "../components/auth/pageHolder";
 import { appPaths } from "./paths";
+import AuthRoute from "./authRoute";
+import PrivateRoute from "./privateRoute";
  
 
 export const routes: RouteObject[] = [
 
   {
     path: appPaths.login,
-    element:<AuthPageHolder title={"Login "}><LoginPage/></AuthPageHolder>,  
+    element:<AuthRoute element={<AuthPageHolder title={"Login "}><LoginPage/></AuthPageHolder>} /> ,  
   } 
 
   ,
   {
     path: appPaths.register,
-    element:<AuthPageHolder  title={"Register "}><RegisterPage/></AuthPageHolder>,  
+    element:<AuthRoute element={<AuthPageHolder  title={"Register "}><RegisterPage/></AuthPageHolder>} />,  
   } ,
   {
     path: appPaths.home,
-    element:    <MainPageContainer><Home/></MainPageContainer>,  
+    element:    <PrivateRoute element={<MainPageContainer><Home/></MainPageContainer>} />,  
   } ,
   {
     path: appPaths.newTrip,
-    element:    <MainPageContainer><NewTrip/></MainPageContainer>,  
+    element: <PrivateRoute element={<MainPageContainer><NewTrip/></MainPageContainer>} />,  
   } 
   ,
   {
     path: appPaths.myLogs,
-    element:<MainPageContainer><DriverLog/></MainPageContainer>,  
+    element:  <PrivateRoute element={ <MainPageContainer><DriverLog/></MainPageContainer>} />,  
   } 
 
 

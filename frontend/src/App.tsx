@@ -11,13 +11,13 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppTheme>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </AppTheme>
-    </AuthProvider>
+    <AppTheme>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes /> 
+        </AuthProvider>
+      </BrowserRouter>
+    </AppTheme>
   );
 }
 
