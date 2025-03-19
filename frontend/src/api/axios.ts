@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import { getToken, removeToken } from '../utils/token';
 
 
 const API_BASE_URL = process.env.APP_API_BASE_URL || 'http://localhost:8000/api';
@@ -9,14 +10,28 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+api.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
- 
+    if (error.response && error.response.status === 401) {
+      removeToken();
+      window.location.href = '/login';
+    }
+    
     const errorMessage =
       error.message ||
-      'Something went wrong';
+      'Something wrong';
     
     return Promise.reject(new Error(errorMessage));
   }
