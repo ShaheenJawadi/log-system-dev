@@ -5,8 +5,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import UntypedToken
 
 
 def get_tokens_for_user(user):
@@ -60,6 +62,7 @@ class LoginView(APIView):
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
 # Logout View
 class LogoutView(APIView):
     permission_classes = [AllowAny]
@@ -72,3 +75,30 @@ class LogoutView(APIView):
             return Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyToken(APIView):
+    def post(self, request):
+        token = request.data.get('access', None)
+        if token is None:
+            return Response({"detail": "Token is missing"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            jwt_auth = JWTAuthentication()
+            user, _ = jwt_auth.authenticate(request)
+
+            user_data = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+            }
+
+            return Response({
+                "detail": "Token is valid",
+                "user": user_data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"detail": f"Invalid token: {str(e)}"}, status=status.HTTP_401_UNAUTHORIZED)
