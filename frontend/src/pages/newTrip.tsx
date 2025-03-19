@@ -7,6 +7,7 @@ import { headerHeight } from "../utils/constatnts";
 import L from "leaflet"; 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ReactDOMServer from "react-dom/server"; 
+import { useMap } from "react-leaflet";
 interface Location {
   display_name: string;
   lat: string;
@@ -55,6 +56,22 @@ const NewTrip: React.FC = () => {
     dropoff.lat
   );
 
+
+
+
+  const MapUpdater = ({ locations }: { locations: { lat: number; lon: number }[] }) => {
+    const map = useMap();
+  
+    useEffect(() => {
+      if (locations.length > 0) {
+        const bounds = L.latLngBounds(locations.map((loc) => [loc.lat, loc.lon]));
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }, [locations, map]);
+  
+    return null;
+  };
+
   return (
     <Box sx={{ height: "100%", position: "relative" }}>
       <TripDetails
@@ -72,6 +89,7 @@ const NewTrip: React.FC = () => {
         scrollWheelZoom={true}
         style={{ width: "100%", height: `calc(100vh - ${headerHeight}px)` }}
       >
+         <MapUpdater locations={[currentLocation, pickup, dropoff].filter((loc): loc is Location => loc !== null).map(loc => ({ lat: parseFloat(loc.lat), lon: parseFloat(loc.lon) }))} />
         <TileLayer
           attribution=' <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
