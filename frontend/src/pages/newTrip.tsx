@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Box, useTheme } from "@mui/material";
 import TripDetails from "../components/newTrip/tripDetails";
@@ -9,7 +9,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ReactDOMServer from "react-dom/server";
 import { useMap } from "react-leaflet";
 import { TripDetailsRequest, TripLocation } from "../types/trip";
-import { apiService } from "../api/axios";
+import { decode } from '@mapbox/polyline';
 import * as tripService from '../services/tripServices';
 const markerIcon = (color: string) =>
   L.divIcon({
@@ -34,6 +34,11 @@ const NewTrip: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const [decodedCoordinates, setDecodedCoordinates] = useState< [number, number][]>([]);
+
+ 
+ 
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -104,8 +109,10 @@ const NewTrip: React.FC = () => {
         };
 
         const response = await tripService.plan(data);  
-        console.log('Route generated successfully:', response);
-
+ 
+        if (response.trip.polyline) {
+          setDecodedCoordinates(decode(response.trip.polyline));
+        }  
         setSuccessMessage('Route generated successfully!');
       } catch (error) {
         console.error('Error generating route:', error);
@@ -171,6 +178,11 @@ const NewTrip: React.FC = () => {
             <Popup>Dropoff: {dropoff.address}</Popup>
           </Marker>
         )}
+
+        {decodedCoordinates.length > 0 && (
+          <Polyline pathOptions={{ color: theme.palette.primary.main }} positions={decodedCoordinates} />
+        )}
+
       </MapContainer>
     </Box>
   );
