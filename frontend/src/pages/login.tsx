@@ -1,6 +1,6 @@
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import {
-    Button,
+  Button,
   Divider,
   FormControl,
   IconButton,
@@ -9,56 +9,92 @@ import {
   OutlinedInput,
   Stack,
   Typography,
+  FormHelperText,
 } from "@mui/material";
 import React, { useState } from "react";
-import { appPaths } from "../routes/paths";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import { appPaths } from "../routes/paths";
+import * as authService from "../services/authServices";  
+import { setToken } from "../utils/token";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+ 
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      username: Yup.string().required("Username is required"),
+      password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+    }),
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const response = await authService.login(values);
+        console.log("Login successful", response.tokens); 
+        setToken(response.tokens.access);
+      } catch (error) { 
+        console.error("Login failed", error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
-    <Stack spacing={4}>
-
-<FormControl variant="outlined">
+    <Stack spacing={4} component="form" onSubmit={formik.handleSubmit}> 
+      <FormControl variant="outlined" error={formik.touched.username && Boolean(formik.errors.username)}>
         <InputLabel>Username</InputLabel>
         <OutlinedInput
-          type={ "text" }
-       
+          type="text"
+          name="username"
+          value={formik.values.username}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           label="Username"
         />
+        {formik.touched.username && formik.errors.username && (
+          <FormHelperText>{formik.errors.username}</FormHelperText>
+        )}
       </FormControl>
-      <FormControl variant="outlined">
+ 
+      <FormControl variant="outlined" error={formik.touched.password && Boolean(formik.errors.password)}>
         <InputLabel>Password</InputLabel>
         <OutlinedInput
           type={showPassword ? "text" : "password"}
+          name="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           endAdornment={
             <InputAdornment position="end">
-              <IconButton
-                aria-label={
-                  showPassword ? "hide the password" : "display the password"
-                }
-                onClick={handleClickShowPassword}
-                edge="end"
-              >
+              <IconButton onClick={handleClickShowPassword} edge="end">
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           }
           label="Password"
         />
+        {formik.touched.password && formik.errors.password && (
+          <FormHelperText>{formik.errors.password}</FormHelperText>
+        )}
       </FormControl>
+ 
+      <Button type="submit" variant="contained" disabled={formik.isSubmitting}>
+        {formik.isSubmitting ? "Logging in..." : "Login"}
+      </Button>
 
-      <Button variant="contained">Login</Button>
-
-      <Divider/>
-      <Typography variant="caption">You dont have an accout ?</Typography>
-      <Button onClick={ ()=>navigate(appPaths.register) } variant="outlined">Create an account</Button>
-
+      <Divider />
+      <Typography variant="caption">Don't have an account?</Typography>
+      <Button type="submit" onClick={() => navigate(appPaths.register)} variant="outlined">
+        Create an account
+      </Button>
     </Stack>
   );
 };
