@@ -6,6 +6,6 @@ export const login = async (data: LoginCredentials) => {
   return response;
 };
 export const register = async (data: RegisterCredentials) => {
-  const response = await apiService.post('/auth/register', data);
+  const response = await apiService.post('/auth/register/', data);
   return response;
 };
