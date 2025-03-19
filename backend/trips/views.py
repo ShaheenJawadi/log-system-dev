@@ -40,13 +40,15 @@ class TripViewSet(viewsets.ModelViewSet):
             longitude=dropoff_location_data.get('longitude')
         )
 
+        user = request.user
 
         trip = Trip.objects.create(
             current_location=current_location,
             pickup_location=pickup_location,
             dropoff_location=dropoff_location,
             current_cycle_hours=request.data.get('current_cycle_hours'),
-            status=request.data.get('status')
+            status=request.data.get('status'),
+            user=user
         )
 
 

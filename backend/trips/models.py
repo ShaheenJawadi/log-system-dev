@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -23,6 +24,7 @@ class Trip(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
     created_at = models.DateTimeField(auto_now_add=True)
     polyline = models.TextField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
 
 
 class RouteStop(models.Model):
