@@ -42,6 +42,7 @@ interface TripDetailsProps {
   suggestions: TripLocation[];
   isFormValid: boolean;
   searchQuery: string;
+  generateRoute: () => void;
 }
 
 const TripDetails: React.FC<TripDetailsProps> = ({
@@ -51,7 +52,8 @@ const TripDetails: React.FC<TripDetailsProps> = ({
   setSearchQuery,
   suggestions,
   isFormValid,
-  searchQuery
+  searchQuery,
+  generateRoute,
 }) => {
   return (
     <StyledBoxContainer>
@@ -186,6 +188,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
         />
 
         <Button
+        onClick={()=>generateRoute()}
           size="large"
           variant="contained"
           color="primary"

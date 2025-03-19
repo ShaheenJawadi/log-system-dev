@@ -8,8 +8,9 @@ import L from "leaflet";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ReactDOMServer from "react-dom/server";
 import { useMap } from "react-leaflet";
-import { TripLocation } from "../types/trip";
-
+import { TripDetailsRequest, TripLocation } from "../types/trip";
+import { apiService } from "../api/axios";
+import * as tripService from '../services/tripServices';
 const markerIcon = (color: string) =>
   L.divIcon({
     className: "custom-marker",
@@ -30,6 +31,9 @@ const NewTrip: React.FC = () => {
   const [dropoff, setDropoff] = useState<TripLocation | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<TripLocation[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -51,7 +55,7 @@ const NewTrip: React.FC = () => {
       } else {
         setSuggestions([]);
       }
-    }, 1200);
+    }, 1050);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
@@ -83,6 +87,35 @@ const NewTrip: React.FC = () => {
     return null;
   };
 
+
+  const generateRoute = async () => {
+    if (isFormValid) {
+      setLoading(true);  
+      setError(null);    
+      setSuccessMessage(null); 
+
+      try {
+        const data: TripDetailsRequest = {
+          current_location: currentLocation,  
+          pickup_location: pickup,  
+          dropoff_location: dropoff, 
+          current_cycle_hours: 5.5, 
+          status: "planned"  
+        };
+
+        const response = await tripService.plan(data);  
+        console.log('Route generated successfully:', response);
+
+        setSuccessMessage('Route generated successfully!');
+      } catch (error) {
+        console.error('Error generating route:', error);
+        setError('Failed to generate route. Please try again later.');
+      } finally {
+        setLoading(false);   
+      }
+    }
+  };
+ 
   return (
     <Box sx={{ height: "100%", position: "relative" }}>
       <TripDetails
@@ -93,6 +126,7 @@ const NewTrip: React.FC = () => {
         suggestions={suggestions}
         isFormValid={isFormValid}
         searchQuery={searchQuery}
+        generateRoute={generateRoute}
       />
 
       <MapContainer
