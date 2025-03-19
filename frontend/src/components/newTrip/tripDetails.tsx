@@ -13,6 +13,7 @@ import {
   Autocomplete,
   Popper,
 } from "@mui/material";
+import { TripLocation } from "../../types/trip";
 
 const StyledBoxContainer = styled(Box)(({ theme }) => ({
   backgroundColor: alpha("#1f2537", 0.4),
@@ -31,18 +32,14 @@ const StyledBoxContainer = styled(Box)(({ theme }) => ({
 
 
 
-interface Location {
-  display_name: string;
-  lat: string;
-  lon: string;
-}
+ 
 
 interface TripDetailsProps {
-  setCurrentLocation: (location: Location | null) => void;
-  setPickup: (location: Location | null) => void;
-  setDropoff: (location: Location | null) => void;
+  setCurrentLocation: (location: TripLocation | null) => void;
+  setPickup: (location: TripLocation | null) => void;
+  setDropoff: (location: TripLocation | null) => void;
   setSearchQuery: (query: string) => void;
-  suggestions: Location[];
+  suggestions: TripLocation[];
   isFormValid: boolean;
   searchQuery: string;
 }
@@ -86,7 +83,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
             },
           }}
           options={suggestions}
-          getOptionLabel={(option) => option.display_name}
+          getOptionLabel={(option) => option.address}
           onInputChange={(_, value) => setSearchQuery(value)}
           onChange={(_, value) => setCurrentLocation(value)}
           renderInput={(params) => (
@@ -127,7 +124,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
             },
           }}
           options={suggestions}
-          getOptionLabel={(option) => option.display_name}
+          getOptionLabel={(option) => option.address}
           onInputChange={(_, value) => setSearchQuery(value)}
           onChange={(_, value) => setPickup(value)}
           renderInput={(params) => (
@@ -168,7 +165,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
             },
           }}
           options={suggestions}
-          getOptionLabel={(option) => option.display_name}
+          getOptionLabel={(option) => option.address}
           onInputChange={(_, value) => setSearchQuery(value)}
           onChange={(_, value) => setDropoff(value)}
           renderInput={(params) => (

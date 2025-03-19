@@ -3,16 +3,13 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Box, useTheme } from "@mui/material";
 import TripDetails from "../components/newTrip/tripDetails";
-import { headerHeight } from "../utils/constatnts"; 
-import L from "leaflet"; 
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import ReactDOMServer from "react-dom/server"; 
+import { headerHeight } from "../utils/constatnts";
+import L from "leaflet";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ReactDOMServer from "react-dom/server";
 import { useMap } from "react-leaflet";
-interface Location {
-  display_name: string;
-  lat: string;
-  lon: string;
-}
+import { TripLocation } from "../types/trip";
+
 const markerIcon = (color: string) =>
   L.divIcon({
     className: "custom-marker",
@@ -24,14 +21,15 @@ const markerIcon = (color: string) =>
   });
 
 const NewTrip: React.FC = () => {
-
   const theme = useTheme();
-  
-  const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
-  const [pickup, setPickup] = useState<Location | null>(null);
-  const [dropoff, setDropoff] = useState<Location | null>(null);
+
+  const [currentLocation, setCurrentLocation] = useState<TripLocation | null>(
+    null
+  );
+  const [pickup, setPickup] = useState<TripLocation | null>(null);
+  const [dropoff, setDropoff] = useState<TripLocation | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<Location[]>([]);
+  const [suggestions, setSuggestions] = useState<TripLocation[]>([]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -40,13 +38,21 @@ const NewTrip: React.FC = () => {
           `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
         )
           .then((res) => res.json())
-          .then((data) => setSuggestions(data))
+          .then((data) => {
+            setSuggestions(
+              data.map((item: any) => ({
+                address: item.display_name,
+                latitude: parseFloat(item.lat),
+                longitude: parseFloat(item.lon),
+              }))
+            );
+          })
           .catch((err) => console.error("Error fetching location data:", err));
       } else {
         setSuggestions([]);
       }
     }, 1200);
-  
+
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
@@ -54,23 +60,26 @@ const NewTrip: React.FC = () => {
     currentLocation &&
     pickup &&
     dropoff &&
-    pickup.lat &&
-    dropoff.lat
+    pickup.latitude &&
+    dropoff.longitude
   );
 
-
-
-
-  const MapUpdater = ({ locations }: { locations: { lat: number; lon: number }[] }) => {
+  const MapUpdater = ({
+    locations,
+  }: {
+    locations: { lat: number; lon: number }[];
+  }) => {
     const map = useMap();
-  
+
     useEffect(() => {
       if (locations.length > 0) {
-        const bounds = L.latLngBounds(locations.map((loc) => [loc.lat, loc.lon]));
+        const bounds = L.latLngBounds(
+          locations.map((loc) => [loc.lat, loc.lon])
+        );
         map.fitBounds(bounds, { padding: [50, 50] });
       }
     }, [locations, map]);
-  
+
     return null;
   };
 
@@ -87,12 +96,16 @@ const NewTrip: React.FC = () => {
       />
 
       <MapContainer
-        center={[	41.739685, 	-87.554420]}
+        center={[41.739685, -87.55442]}
         zoom={5}
         scrollWheelZoom={true}
         style={{ width: "100%", height: `calc(100vh - ${headerHeight}px)` }}
       >
-         <MapUpdater locations={[currentLocation, pickup, dropoff].filter((loc): loc is Location => loc !== null).map(loc => ({ lat: parseFloat(loc.lat), lon: parseFloat(loc.lon) }))} />
+        <MapUpdater
+          locations={[currentLocation, pickup, dropoff]
+            .filter((loc): loc is TripLocation => loc !== null)
+            .map((loc) => ({ lat: loc.latitude, lon: loc.longitude }))}
+        />
         <TileLayer
           attribution=' <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -100,25 +113,28 @@ const NewTrip: React.FC = () => {
 
         {currentLocation && (
           <Marker
-            position={[
-              parseFloat(currentLocation.lat),
-              parseFloat(currentLocation.lon),
-            ]}
+            position={[currentLocation.latitude, currentLocation.longitude]}
             icon={markerIcon(theme.palette.error.main)}
           >
-            <Popup>Current Location: {currentLocation.display_name}</Popup>
+            <Popup>Current Location: {currentLocation.address}</Popup>
           </Marker>
         )}
 
         {pickup && (
-          <Marker icon={markerIcon(theme.palette.secondary.main)} position={[parseFloat(pickup.lat), parseFloat(pickup.lon)]}>
-            <Popup>Pickup: {pickup.display_name}</Popup>
+          <Marker
+            icon={markerIcon(theme.palette.secondary.main)}
+            position={[pickup.latitude, pickup.longitude]}
+          >
+            <Popup>Pickup: {pickup.address}</Popup>
           </Marker>
         )}
 
         {dropoff && (
-          <Marker icon={markerIcon(theme.palette.primary.main)} position={[parseFloat(dropoff.lat), parseFloat(dropoff.lon)]}>
-            <Popup>Dropoff: {dropoff.display_name}</Popup>
+          <Marker
+            icon={markerIcon(theme.palette.primary.main)}
+            position={[dropoff.latitude, dropoff.longitude]}
+          >
+            <Popup>Dropoff: {dropoff.address}</Popup>
           </Marker>
         )}
       </MapContainer>
