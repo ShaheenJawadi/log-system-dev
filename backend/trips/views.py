@@ -50,7 +50,6 @@ class TripViewSet(viewsets.ModelViewSet):
         )
 
 
-        serializer = TripSerializer(trip)
 
         route_service = RouteService(trip)
         planned_trip = route_service.plan_route()
