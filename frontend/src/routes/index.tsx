@@ -6,31 +6,32 @@ import DriverLog from "../pages/driverlog";
 import LoginPage from "../pages/login";
 import RegisterPage from "../pages/register";
 import AuthPageHolder from "../components/auth/pageHolder";
+import { appPaths } from "./paths";
  
 
 export const routes: RouteObject[] = [
 
   {
-    path: "/login",
+    path: appPaths.login,
     element:<AuthPageHolder title={"Login "}><LoginPage/></AuthPageHolder>,  
   } 
 
   ,
   {
-    path: "/register",
+    path: appPaths.register,
     element:<AuthPageHolder  title={"Register "}><RegisterPage/></AuthPageHolder>,  
   } ,
   {
-    path: "/",
+    path: appPaths.home,
     element:    <MainPageContainer><Home/></MainPageContainer>,  
   } ,
   {
-    path: "/new-trip",
+    path: appPaths.newTrip,
     element:    <MainPageContainer><NewTrip/></MainPageContainer>,  
   } 
   ,
   {
-    path: "/my-logs",
+    path: appPaths.myLogs,
     element:<MainPageContainer><DriverLog/></MainPageContainer>,  
   } 
 

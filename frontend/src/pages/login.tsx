@@ -11,8 +11,12 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import { appPaths } from "../routes/paths";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -53,7 +57,7 @@ const LoginPage = () => {
 
       <Divider/>
       <Typography variant="caption">You dont have an accout ?</Typography>
-      <Button variant="outlined">Create an account</Button>
+      <Button onClick={ ()=>navigate(appPaths.register) } variant="outlined">Create an account</Button>
 
     </Stack>
   );
