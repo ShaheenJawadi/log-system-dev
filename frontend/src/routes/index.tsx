@@ -5,19 +5,20 @@ import NewTrip from "../pages/newTrip";
 import DriverLog from "../pages/driverlog";
 import LoginPage from "../pages/login";
 import RegisterPage from "../pages/register";
+import AuthPageHolder from "../components/auth/pageHolder";
  
 
 export const routes: RouteObject[] = [
 
   {
     path: "/login",
-    element:<LoginPage/>,  
+    element:<AuthPageHolder title={"Login "}><LoginPage/></AuthPageHolder>,  
   } 
 
   ,
   {
     path: "/register",
-    element:<RegisterPage/>,  
+    element:<AuthPageHolder  title={"Register "}><RegisterPage/></AuthPageHolder>,  
   } ,
   {
     path: "/",
