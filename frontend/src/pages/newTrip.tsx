@@ -87,8 +87,8 @@ const NewTrip: React.FC = () => {
       />
 
       <MapContainer
-        center={[51.505, -0.09]}
-        zoom={13}
+        center={[	41.739685, 	-87.554420]}
+        zoom={5}
         scrollWheelZoom={true}
         style={{ width: "100%", height: `calc(100vh - ${headerHeight}px)` }}
       >
