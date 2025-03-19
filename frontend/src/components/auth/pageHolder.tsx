@@ -42,6 +42,8 @@ const AuthPageHolder = ({ children , title  }: { children: ReactNode , title : s
               </Typography>
               <LocalShippingIcon fontSize={"medium"} color="secondary" />
             </Stack>
+
+            {children}
           </Stack>
         </CardContent>
       </Card>
