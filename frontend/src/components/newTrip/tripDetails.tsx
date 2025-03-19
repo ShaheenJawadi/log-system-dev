@@ -11,6 +11,7 @@ import {
   InputAdornment,
   Typography,
   Autocomplete,
+  Popper,
 } from "@mui/material";
 
 const StyledBoxContainer = styled(Box)(({ theme }) => ({
@@ -28,6 +29,8 @@ const StyledBoxContainer = styled(Box)(({ theme }) => ({
   backdropFilter: "blur(2px)",
 }));
 
+
+
 interface Location {
   display_name: string;
   lat: string;
@@ -41,6 +44,7 @@ interface TripDetailsProps {
   setSearchQuery: (query: string) => void;
   suggestions: Location[];
   isFormValid: boolean;
+  searchQuery: string;
 }
 
 const TripDetails: React.FC<TripDetailsProps> = ({
@@ -50,6 +54,7 @@ const TripDetails: React.FC<TripDetailsProps> = ({
   setSearchQuery,
   suggestions,
   isFormValid,
+  searchQuery
 }) => {
   return (
     <StyledBoxContainer>
@@ -60,7 +65,26 @@ const TripDetails: React.FC<TripDetailsProps> = ({
           </Typography>
         </Box>
 
-        <Autocomplete
+        <Autocomplete 
+         noOptionsText={
+          searchQuery.length < 4
+            ? "Type at least 4 characters..."
+            : "No results found"
+        }
+          slotProps={{
+            popper: {
+              modifiers: [
+                {
+                  name: "zIndex",
+                  enabled: true,
+                  phase: "write",
+                  fn: ({ state }) => {
+                    state.elements.popper.style.zIndex = "9999";
+                  },
+                },
+              ],
+            },
+          }}
           options={suggestions}
           getOptionLabel={(option) => option.display_name}
           onInputChange={(_, value) => setSearchQuery(value)}
@@ -83,6 +107,25 @@ const TripDetails: React.FC<TripDetailsProps> = ({
         />
 
         <Autocomplete
+         noOptionsText={
+          searchQuery.length < 4
+            ? "Type at least 4 characters..."
+            : "No results found"
+        }
+          slotProps={{
+            popper: {
+              modifiers: [
+                {
+                  name: "zIndex",
+                  enabled: true,
+                  phase: "write",
+                  fn: ({ state }) => {
+                    state.elements.popper.style.zIndex = "9999";
+                  },
+                },
+              ],
+            },
+          }}
           options={suggestions}
           getOptionLabel={(option) => option.display_name}
           onInputChange={(_, value) => setSearchQuery(value)}
@@ -105,6 +148,25 @@ const TripDetails: React.FC<TripDetailsProps> = ({
         />
 
         <Autocomplete
+         noOptionsText={
+          searchQuery.length < 4
+            ? "Type at least 4 characters..."
+            : "No results found"
+        }
+          slotProps={{
+            popper: {
+              modifiers: [
+                {
+                  name: "zIndex",
+                  enabled: true,
+                  phase: "write",
+                  fn: ({ state }) => {
+                    state.elements.popper.style.zIndex = "9999";
+                  },
+                },
+              ],
+            },
+          }}
           options={suggestions}
           getOptionLabel={(option) => option.display_name}
           onInputChange={(_, value) => setSearchQuery(value)}

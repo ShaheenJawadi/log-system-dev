@@ -83,6 +83,7 @@ const NewTrip: React.FC = () => {
         setSearchQuery={setSearchQuery}
         suggestions={suggestions}
         isFormValid={isFormValid}
+        searchQuery={searchQuery}
       />
 
       <MapContainer
