@@ -4,6 +4,7 @@ import { routes } from "./routes";
 import AppTheme from "./theme/themeProvider";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { AuthProvider } from "./context/authContext";
+import { MapUtilsProvider } from "./context/mapContext";
 const AppRoutes = () => {
   const routeElements = useRoutes(routes);
   return routeElements;
@@ -14,7 +15,9 @@ function App() {
     <AppTheme>
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes /> 
+          <MapUtilsProvider>
+            <AppRoutes /> 
+          </MapUtilsProvider>
         </AuthProvider>
       </BrowserRouter>
     </AppTheme>
