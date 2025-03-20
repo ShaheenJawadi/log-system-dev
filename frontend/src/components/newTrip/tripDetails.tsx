@@ -32,17 +32,7 @@ const StyledBoxContainer = styled(Box)(({ theme }) => ({
   margin: theme.spacing(2),
   backdropFilter: "blur(2px)",
 }));
-
-interface TripDetailsProps {
-  setCurrentLocation: (location: TripLocation | null) => void;
-  setPickup: (location: TripLocation | null) => void;
-  setDropoff: (location: TripLocation | null) => void;
-  setSearchQuery: (query: string) => void;
-  suggestions: TripLocation[];
-  isFormValid: boolean;
-  searchQuery: string;
-  generateRoute: () => void;
-}
+ 
 
 const TripDetails: React.FC = () => {
   const {
@@ -229,7 +219,7 @@ const TripDetails: React.FC = () => {
         />
 
         <Button
-          onClick={() => generateRoute()}
+         
           size="large"
           variant="contained"
           color="primary"

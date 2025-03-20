@@ -1,0 +1,81 @@
+import { useState, useEffect } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+} from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import { useTheme } from "@mui/material";
+import { headerHeight } from "../utils/constatnts";
+import L from "leaflet";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ReactDOMServer from "react-dom/server";
+import { useMap } from "react-leaflet";
+import { useMapUtils } from "../context/mapContext";
+
+const MapComponant = () => {
+  const theme = useTheme();
+  const { pinLocations ,decodedCoordinates} = useMapUtils();
+
+
+  const MapUpdater = () => {
+    const map = useMap();
+
+    useEffect(() => {
+      if (pinLocations.length > 0) {
+        const bounds = L.latLngBounds(
+          pinLocations.map((loc) => [loc.latitude, loc.longitude])
+        );
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }, [pinLocations, map]);
+
+    return null;
+  };
+
+  return (
+    <MapContainer
+      center={[41.739685, -87.55442]}
+      zoom={5}
+      scrollWheelZoom={true}
+      style={{ width: "100%", height: `calc(100vh - ${headerHeight}px)` }}
+    >
+      <MapUpdater />
+      <TileLayer
+        attribution=' <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {pinLocations.map((pin, index) => (
+        <Marker
+          key={index}
+          position={[pin.latitude, pin.longitude]}
+          icon={markerIcon(theme.palette[pin.color].main)}
+        >
+          <Popup>
+            {pin.name}: {pin.address}
+          </Popup>
+        </Marker>
+      ))}
+
+       {decodedCoordinates.length > 0 && (
+        <Polyline
+          pathOptions={{ color: theme.palette.primary.main }}
+          positions={decodedCoordinates}
+        />
+      )}  
+    </MapContainer>
+  );
+};
+
+const markerIcon = (color: string) =>
+  L.divIcon({
+    className: "custom-icon",
+    html: ReactDOMServer.renderToString(
+      <LocationOnIcon style={{ fontSize: 36, color: color }} />
+    ),
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+  });
+export default MapComponant;
