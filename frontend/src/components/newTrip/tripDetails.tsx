@@ -219,7 +219,7 @@ const TripDetails: React.FC = () => {
         />
 
         <Button
-         
+          onClick={() => generateRoute()}
           size="large"
           variant="contained"
           color="primary"
