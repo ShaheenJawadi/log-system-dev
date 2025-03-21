@@ -11,7 +11,7 @@ import TimelineDot, { TimelineDotPropsColorOverrides } from "@mui/lab/TimelineDo
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import moment from "moment";
 import Typography from "@mui/material/Typography";
-
+import ViewTimelineIcon from '@mui/icons-material/ViewTimeline';
 import AirlineSeatIndividualSuiteIcon from "@mui/icons-material/AirlineSeatIndividualSuite";
 import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
 import OutboxIcon from "@mui/icons-material/Outbox";
@@ -19,7 +19,7 @@ import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import { Stop } from "../../types/trip";
 
 const StopsBox = styled(Slide)(({ theme }) => ({
-  maxWidth: "40vw",
+  maxWidth: "30vw",
   backgroundColor: "#fff",
   height: "100%",
 }));
@@ -64,6 +64,13 @@ const TripStops = () => {
         mountOnEnter
         unmountOnExit
       >
+        <Stack spacing={3}>
+           <Stack spacing={4} direction={"row"} justifyContent={"center"} alignItems={"center"} sx={{backgroundColor:"primary.main", color:"#fff", padding:2}}>
+            <ViewTimelineIcon />
+          <Typography textAlign={"center"} variant="h6">
+            Stops timeline
+          </Typography>
+        </Stack>
         <Box width={"100%"}>
           <Timeline position="left">
             {tripStops.map((stop, index) => (
@@ -105,6 +112,8 @@ const TripStops = () => {
             ))}
           </Timeline>
         </Box>
+        </Stack>
+       
       </StopsBox>
     </PerfectScrollbar>
   );
