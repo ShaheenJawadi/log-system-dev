@@ -12,8 +12,15 @@ import {
   Typography,
   Autocomplete,
   Popper,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  FormHelperText,
 } from "@mui/material";
 import { TripLocation } from "../../types/trip";
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+import SpeedIcon from '@mui/icons-material/Speed';
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useMapUtils } from "../../context/mapContext";
@@ -32,7 +39,6 @@ const StyledBoxContainer = styled(Box)(({ theme }) => ({
   margin: theme.spacing(2),
   backdropFilter: "blur(2px)",
 }));
- 
 
 const TripDetails: React.FC = () => {
   const {
@@ -217,6 +223,50 @@ const TripDetails: React.FC = () => {
             />
           )}
         />
+
+        <FormControl variant="outlined">
+          <InputLabel>Current Cycle Used (Hrs) </InputLabel>
+          <OutlinedInput
+            type="text"
+            name="username"
+            label="Current Cycle Used (Hrs)"
+            startAdornment={
+              <InputAdornment position="start">
+                <HourglassBottomIcon color="warning" />
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+
+        <FormControl variant="outlined">
+          <InputLabel>Average driving speed </InputLabel>
+          <OutlinedInput
+            type="text"
+            name="username"
+            label="Average driving speed"
+            startAdornment={
+              <InputAdornment position="start">
+                <SpeedIcon color="warning" />
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+            
+        <FormControl variant="outlined">
+          <InputLabel>Current date-time </InputLabel>
+          <OutlinedInput
+            type="text"
+            name="username"
+            label="Current date-time"
+            startAdornment={
+              <InputAdornment position="start">
+                <AccessTimeFilledIcon color="warning" />
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+
+
 
         <Button
           onClick={() => generateRoute()}
