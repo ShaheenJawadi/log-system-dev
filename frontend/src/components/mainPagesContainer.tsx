@@ -4,10 +4,10 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import MainHeader from "./mainHeader";
 import { headerHeight } from "../utils/constatnts";
 
-const MainPageContainer = ({ children }: { children: ReactNode }) => {
+const MainPageContainer = ({ children , title }: { children: ReactNode , title:string }) => {
   return (
     <Stack sx={{ height: "100vh" }}>
-      <MainHeader />
+      <MainHeader title={title} />
       <Box sx={{ flex: 1 }}>
         <PerfectScrollbar>
           <Box 

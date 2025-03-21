@@ -8,6 +8,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
 import Grid from "@mui/material/Grid2";
 import { headerHeight } from "../utils/constatnts";
 import { appPaths } from "../routes/paths";
@@ -31,13 +32,7 @@ const BtnCard = styled(Card)(({ theme }) => ({
 
 const Home: React.FC = () => {
   const btnsMenu = [
-    {
-      label: "Plan a Trip",
-      path: appPaths.newTrip,
-      color: "#fff",
-      bg: "#008080",
-      icon: <PolylineIcon sx={{ color: "#fff", fontSize: 140 }} />,
-    },
+   
     {
       label: " Manual Log Entry ",
       path: appPaths.newEld,
@@ -48,11 +43,25 @@ const Home: React.FC = () => {
       ),
     },
     {
+      label: "Plan a Trip",
+      path: appPaths.newTrip,
+      color: "#fff",
+      bg: "#008080",
+      icon: <PolylineIcon sx={{ color: "#fff", fontSize: 140 }} />,
+    },
+    {
       label: " Trip History ",
       path: appPaths.history,
       color: "#fff",
-      bg: "#f84960",
+      bg: "#008080",
       icon: <HistoryIcon sx={{ color: "#fff", fontSize: 140 }} />,
+    },
+    {
+      label: " Logout ",
+      path: appPaths.history,
+      color: "#fff",
+      bg: "#f84960",
+      icon: <LogoutIcon sx={{ color: "#fff", fontSize: 140 }} />,
     },
   ];
 
@@ -66,14 +75,14 @@ const Home: React.FC = () => {
       >
         <Grid container spacing={3}>
           {btnsMenu.map((btn) => (
-            <Grid size={4}>
+            <Grid size={6}>
               <BtnCard
                 onClick={() => navigate(btn.path)}
                 sx={{ height: 365, backgroundColor: btn.bg, color: btn.color }}
               >
                 <IconHolder>{btn.icon}</IconHolder>
                 <CardContent>
-                  <Typography color={btn.color} fontWeight={700} fontSize={40}>
+                  <Typography color={btn.color} fontWeight={700} fontSize={55}>
                     {btn.label}
                   </Typography>
                 </CardContent>

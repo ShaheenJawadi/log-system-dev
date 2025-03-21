@@ -25,16 +25,16 @@ export const routes: RouteObject[] = [
   } ,
   {
     path: appPaths.home,
-    element:    <PrivateRoute element={<MainPageContainer><Home/></MainPageContainer>} />,  
+    element:    <PrivateRoute element={<MainPageContainer title=""><Home/></MainPageContainer>} />,  
   } ,
   {
     path: appPaths.newTrip,
-    element: <PrivateRoute element={<MainPageContainer><NewTrip/></MainPageContainer>} />,  
+    element: <PrivateRoute element={<MainPageContainer title="Plan a Trip"><NewTrip/></MainPageContainer>} />,  
   } 
   ,
   {
     path: appPaths.myLogs,
-    element:  <PrivateRoute element={ <MainPageContainer><DriverLog/></MainPageContainer>} />,  
+    element:  <PrivateRoute element={ <MainPageContainer title="Trip History" ><DriverLog/></MainPageContainer>} />,  
   } 
 
 
