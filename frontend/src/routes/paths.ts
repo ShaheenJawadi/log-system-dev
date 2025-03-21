@@ -6,5 +6,11 @@ export const appPaths={
     home:"/",    
     newTrip:"/new-trip",
     myLogs:"/my-logs",
+    history:"/history",
+    newEld:"/new-eld",
+
+
+    
+
 
 }
