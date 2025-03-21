@@ -44,3 +44,7 @@ export type TripData = {
     log_days: LogDay[];
     stops: Stop[];
   };
+
+
+
+  

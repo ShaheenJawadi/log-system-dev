@@ -17,7 +17,7 @@ import { useMapUtils } from "../context/mapContext";
 
 const MapComponant = () => {
   const theme = useTheme();
-  const { pinLocations ,decodedCoordinates} = useMapUtils();
+  const { pinLocations ,decodedCoordinates , tripStops} = useMapUtils();
 
 
   const MapUpdater = () => {
@@ -55,6 +55,18 @@ const MapComponant = () => {
         >
           <Popup>
             {pin.name}: {pin.address}
+          </Popup>
+        </Marker>
+      ))}
+
+{tripStops.map((pin, index) => pin.stop_type!="pickup"&&pin.stop_type!="dropoff"&&(
+        <Marker
+          key={index}
+          position={[pin.location_details.latitude, pin.location_details.longitude]}
+          icon={markerIcon(theme.palette.warning.main)}
+        >
+          <Popup>
+            {pin.stop_type}: {pin.location_details.address}
           </Popup>
         </Marker>
       ))}
