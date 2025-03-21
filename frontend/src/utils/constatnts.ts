@@ -1,5 +1,5 @@
 export const headerHeight = 62;
-
+export const transparentColor="#1f2537";
 //  daily logs drawing constants
 export const canvasLogTable_MARGIN = {
     LEFT: 100,

@@ -13,10 +13,19 @@ const NewTrip: React.FC = () => {
     <Box sx={{ height: "100%", position: "relative" }}>
       <TripDetails />
 
-      <Stack direction={"row"} height={"100%"} sx={{ maxHeight: `calc(100vh - ${headerHeight}px)` }}>
-  
-                <TripStops />
-      
+      <Stack
+        direction={"row"}
+        height={"100%"}
+        sx={{
+          maxHeight: `calc(100vh - ${headerHeight}px)`,
+          position: "relative",
+        }}
+      >
+        <Box sx={{ position: "absolute" , zIndex: 9999, top: 0, left: 0, height: "100%", width: "30%" }} minHeight={"100%"}>
+     
+          <TripStops />
+        </Box>
+
         <Box flex={1}>
           <MapComponant />
         </Box>

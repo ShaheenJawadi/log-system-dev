@@ -24,9 +24,10 @@ import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useMapUtils } from "../../context/mapContext";
+import { transparentColor } from "../../utils/constatnts";
 
 const StyledBoxContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: alpha("#1f2537", 0.4),
+  backgroundColor: alpha(transparentColor, 0.4),
   color: theme.palette.primary.contrastText,
   padding: theme.spacing(4),
   borderRadius: theme.shape.borderRadius,
@@ -90,16 +91,7 @@ const TripDetails: React.FC = () => {
   return (
     <StyledBoxContainer>
       <Stack spacing={4}>
-        <Box>
-          <Typography
-            variant="h5"
-            textAlign="center"
-            fontWeight={"bold"}
-            color="white"
-          >
-            Start a new trip
-          </Typography>
-        </Box>
+         
 
         <Autocomplete
           noOptionsText={
