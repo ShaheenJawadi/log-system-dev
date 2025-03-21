@@ -1,6 +1,9 @@
 import NearMeIcon from "@mui/icons-material/NearMe";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import ViewTimelineIcon from "@mui/icons-material/ViewTimeline";
 import FlagIcon from "@mui/icons-material/Flag";
+import ReplayIcon from "@mui/icons-material/Replay";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import {
   styled,
   Box,
@@ -16,10 +19,13 @@ import {
   InputLabel,
   OutlinedInput,
   FormHelperText,
+  IconButton,
 } from "@mui/material";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+
 import { TripLocation } from "../../types/trip";
-import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
-import SpeedIcon from '@mui/icons-material/Speed';
+import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
+import SpeedIcon from "@mui/icons-material/Speed";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -87,13 +93,44 @@ const TripDetails: React.FC = () => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
-
   return (
     <StyledBoxContainer>
-      <Stack spacing={4}>
-         
+      <Stack spacing={4} mb={5}>
+        <Stack flexDirection={"row-reverse"}>
+          <IconButton size="large" sx={{ color: "red" }}>
+            <DeleteForeverIcon />
+          </IconButton>
+        </Stack>
 
+        <Button
+          onClick={() => generateRoute()}
+          size="large"
+          variant="contained"
+          startIcon={<ViewTimelineIcon />}
+          color="secondary"
+        >
+          Display ELD LOGS
+        </Button>
+
+        <Button
+          onClick={() => generateRoute()}
+          size="large"
+          variant="contained"
+          startIcon={<ReplayIcon />}
+          color="warning"
+        >
+          Plan new trip
+        </Button>
+      </Stack>
+      <Stack spacing={4}>
         <Autocomplete
+          sx={{
+            "& .MuiInputBase-root": {
+              borderRadius: "8px",
+              marginTop: "-13px",
+              paddingTop: "15px",
+            },
+          }}
           noOptionsText={
             searchQuery.length < 4
               ? "Type at least 4 characters..."
@@ -230,11 +267,18 @@ const TripDetails: React.FC = () => {
           />
         </FormControl>
 
-        <FormControl variant="outlined">
+        <FormControl
+          sx={{
+            "& .MuiInputBase-root": {
+              marginTop: "-15px",
+              paddingTop: "15px",
+            },
+          }}
+          variant="outlined"
+        >
           <InputLabel>Average driving speed </InputLabel>
           <OutlinedInput
             type="text"
-            name="username"
             label="Average driving speed"
             startAdornment={
               <InputAdornment position="start">
@@ -243,7 +287,7 @@ const TripDetails: React.FC = () => {
             }
           />
         </FormControl>
-            
+
         <FormControl variant="outlined">
           <InputLabel>Current date-time </InputLabel>
           <OutlinedInput
@@ -258,16 +302,15 @@ const TripDetails: React.FC = () => {
           />
         </FormControl>
 
-
-
         <Button
+          startIcon={<AutoFixHighIcon />}
           onClick={() => generateRoute()}
           size="large"
           variant="contained"
           color="primary"
           disabled={!isFormValid}
         >
-          Generate an optimized route
+          Generate a trip plan
         </Button>
       </Stack>
     </StyledBoxContainer>
