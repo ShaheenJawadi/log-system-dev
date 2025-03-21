@@ -14,7 +14,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ReactDOMServer from "react-dom/server";
 import { useMap } from "react-leaflet";
 import { useMapUtils } from "../context/mapContext";
-
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import HotelIcon from '@mui/icons-material/Hotel';
 const MapComponant = () => {
   const theme = useTheme();
   const { pinLocations ,decodedCoordinates , tripStops} = useMapUtils();
@@ -63,7 +64,7 @@ const MapComponant = () => {
         <Marker
           key={index}
           position={[pin.location_details.latitude, pin.location_details.longitude]}
-          icon={markerIcon(theme.palette.warning.main)}
+          icon={markerIcon(theme.palette.warning.main , pin.stop_type)}
         >
           <Popup>
             {pin.stop_type}: {pin.location_details.address}
@@ -81,11 +82,23 @@ const MapComponant = () => {
   );
 };
 
-const markerIcon = (color: string) =>
+const markerIcon = (color: string , type: "rest"|"loc"|"fuel"= "loc") =>
   L.divIcon({
     className: "custom-icon",
     html: ReactDOMServer.renderToString(
-      <LocationOnIcon style={{ fontSize: 36, color: color }} />
+      type === "loc" ? (
+        <LocationOnIcon  style={{ fontSize: 36, color: color }} />
+        
+
+      ) : type === "fuel" ? (
+        
+        <LocalGasStationIcon style={{ fontSize: 30 , color:"#00b9c1"  }} />
+
+      ) : type === "rest" ? (
+        
+        <HotelIcon    style={{ fontSize: 30,  color:"#FDB528" }} />
+
+      ) : null
     ),
     iconSize: [30, 30],
     iconAnchor: [15, 30],
