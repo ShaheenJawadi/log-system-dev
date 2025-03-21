@@ -58,6 +58,12 @@ const TripDetails: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<TripLocation[]>([]);
 
+  const inputBoxing = {
+    "& .MuiInputBase-root": {
+      marginTop: "-15px",
+      paddingTop: "15px",
+    },
+  };
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchQuery.length > 4) {
@@ -122,15 +128,9 @@ const TripDetails: React.FC = () => {
           Plan new trip
         </Button>
       </Stack>
-      <Stack spacing={4}>
+      <Stack mt={10} spacing={8}>
         <Autocomplete
-          sx={{
-            "& .MuiInputBase-root": {
-              borderRadius: "8px",
-              marginTop: "-13px",
-              paddingTop: "15px",
-            },
-          }}
+          sx={{ ...inputBoxing }}
           noOptionsText={
             searchQuery.length < 4
               ? "Type at least 4 characters..."
@@ -172,6 +172,7 @@ const TripDetails: React.FC = () => {
         />
 
         <Autocomplete
+          sx={{ ...inputBoxing }}
           noOptionsText={
             searchQuery.length < 4
               ? "Type at least 4 characters..."
@@ -213,6 +214,7 @@ const TripDetails: React.FC = () => {
         />
 
         <Autocomplete
+          sx={{ ...inputBoxing }}
           noOptionsText={
             searchQuery.length < 4
               ? "Type at least 4 characters..."
@@ -253,9 +255,10 @@ const TripDetails: React.FC = () => {
           )}
         />
 
-        <FormControl variant="outlined">
+        <FormControl variant="outlined"  sx={{ ...inputBoxing }}>
           <InputLabel>Current Cycle Used (Hrs) </InputLabel>
           <OutlinedInput
+          
             type="text"
             name="username"
             label="Current Cycle Used (Hrs)"
@@ -268,16 +271,12 @@ const TripDetails: React.FC = () => {
         </FormControl>
 
         <FormControl
-          sx={{
-            "& .MuiInputBase-root": {
-              marginTop: "-15px",
-              paddingTop: "15px",
-            },
-          }}
+                sx={{...inputBoxing}}
           variant="outlined"
         >
           <InputLabel>Average driving speed </InputLabel>
           <OutlinedInput
+       
             type="text"
             label="Average driving speed"
             startAdornment={
@@ -288,10 +287,11 @@ const TripDetails: React.FC = () => {
           />
         </FormControl>
 
-        <FormControl variant="outlined">
+        <FormControl variant="outlined"   sx={{ ...inputBoxing }}>
           <InputLabel>Current date-time </InputLabel>
           <OutlinedInput
-            type="text"
+         
+            type="datetime-local"
             name="username"
             label="Current date-time"
             startAdornment={
