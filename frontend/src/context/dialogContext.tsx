@@ -7,6 +7,7 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
+import * as tripService from "../services/tripServices";
 
 type DialogType = "deleteTrip" | "deleteLog" | null;
 
@@ -31,8 +32,7 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const [dialogType, setDialogType] = useState<DialogType>(null);
   const [itemId, setItemId] = useState<number | null>(null);
 
-
-  const openDialog = (type: DialogType , params:{id:number}) => {
+  const openDialog = (type: DialogType, params: { id: number }) => {
     setDialogType(type);
     setDialogOpen(true);
     setItemId(params.id);
@@ -84,7 +84,8 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
       {children}
       {dialogOptions && (
         <DeleteDialog
-        itemId={itemId}
+        target={dialogType}
+          itemId={itemId}
           dialogOptions={dialogOptions}
           dialogOpen={dialogOpen}
           closeDialog={closeDialog}
@@ -98,7 +99,8 @@ interface DeleteDialogProps {
   dialogOptions: DialogOptions;
   dialogOpen: boolean;
   closeDialog: () => void;
-  itemId: number |null;
+  itemId: number | null;
+  target: DialogType;
 }
 
 const DeleteDialog = ({
@@ -106,7 +108,21 @@ const DeleteDialog = ({
   dialogOpen,
   closeDialog,
   itemId,
+  target
 }: DeleteDialogProps) => {
+
+  const deleteAction = async () => { 
+    try {
+        if(target === "deleteTrip"){
+            const response = await tripService.deleteTrip(itemId as number);
+            closeDialog();
+        }
+     
+    } catch (error) {
+      console.error("Delete failed", error);
+    }
+  };
+
   return (
     <Dialog
       open={dialogOpen}
@@ -120,7 +136,7 @@ const DeleteDialog = ({
       </DialogContent>
       <DialogActions>
         {dialogOptions.actions.map((action, index) => (
-          <Button key={index} onClick={action.onClick}>
+          <Button key={index} onClick={()=>deleteAction()} color="primary">
             {action.label}
           </Button>
         ))}

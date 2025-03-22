@@ -15,7 +15,9 @@ const MapContext = createContext<{
   pinLocations: MapPin[];
   decodedCoordinates: [number, number][];
     tripStops: Stop[];
+    fetchSingleTrip: (id:number) => void;
 }>({
+  fetchSingleTrip: (id:number) => {},
   isFormValid: false,
   setCurrentLocation: (loc: TripLocation | null) => {},
   setPickup: (loc: TripLocation | null) => {},
@@ -81,6 +83,38 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   };
+
+  const fetchSingleTrip = async (id:number) => {
+ 
+      setLoading(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      try {
+      
+
+        const response = await tripService.getSingleTrip(5);
+        setCurrentLocation(response.trip.current_location_details);
+        setDropoff(response.trip.dropoff_location_details);
+        setPickup(response.trip.pickup_location_details);
+
+
+        if (response.trip.polyline) {
+          setDecodedCoordinates(decode(response.trip.polyline));
+        }
+        if (response.stops) {
+          setTripStops(response.stops);
+        }
+
+        setSuccessMessage("Route generated successfully!");
+      } catch (error) {
+        console.error("Error generating route:", error);
+        setError("Failed to generate route. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+  
+  };
   useEffect(() => {
     setPinLocations(() => {
       const pins: MapPin[] = [];
@@ -117,6 +151,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
   return (
     <MapContext.Provider
       value={{
+        fetchSingleTrip,
         tripStops,
         isFormValid,
         setCurrentLocation,

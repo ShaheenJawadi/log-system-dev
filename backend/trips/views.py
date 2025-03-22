@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 
 from driver_logs.models import LogEntry, LogDay
 from driver_logs.serializers import LogEntrySerializer, LogDaySerializer
-from .models import Trip, Location,  RouteStop
+from .models import Trip, Location, RouteStop
 from .serializers import (TripSerializer, RouteStopSerializer)
 from .services import RouteService
 
@@ -16,11 +16,9 @@ class TripViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def plan(self, request):
-
         current_location_data = request.data.get('current_location')
         pickup_location_data = request.data.get('pickup_location')
         dropoff_location_data = request.data.get('dropoff_location')
-
 
         current_location = Location.objects.create(
             address=current_location_data.get('address'),
@@ -51,19 +49,14 @@ class TripViewSet(viewsets.ModelViewSet):
             user=user
         )
 
-
-
         route_service = RouteService(trip)
         planned_trip = route_service.plan_route()
-
 
         # complete  data trip
         response_data = self.get_serialized_trip_data(planned_trip)
         return Response(response_data)
 
     def get_serialized_trip_data(self, trip):
-
-
         log_days = LogDay.objects.filter(trip=trip).order_by('date')
         stops = RouteStop.objects.filter(trip=trip).order_by('arrival_time')
 
@@ -72,12 +65,10 @@ class TripViewSet(viewsets.ModelViewSet):
         log_days_data = LogDaySerializer(log_days, many=True).data
         stops_data = RouteStopSerializer(stops, many=True).data
 
-
         for log_day_data in log_days_data:
             log_day = next(ld for ld in log_days if ld.id == log_day_data['id'])
             entries = LogEntry.objects.filter(log_day=log_day).order_by('start')
             log_day_data['entries'] = LogEntrySerializer(entries, many=True).data
-
 
         response_data = {
             'trip': trip_data,
@@ -87,8 +78,12 @@ class TripViewSet(viewsets.ModelViewSet):
 
         return response_data
 
-
     def destroy(self, request, *args, **kwargs):
         trip = self.get_object()
         trip.delete()
         return Response({"message": "Trip deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+    def retrieve(self, request, *args, **kwargs):
+        trip = self.get_object()
+        response_data = self.get_serialized_trip_data(trip)
+        return Response(response_data)

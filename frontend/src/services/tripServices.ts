@@ -7,10 +7,16 @@ export const plan = async (data: TripDetailsRequest) => {
 };
  
 
+export const getSingleTrip = async (id: number) => {
+  const response = await apiService.get<TripData>(`/trip/${id}/`);
+  return response;
+};
+ 
+ 
 
 
 export const deleteTrip = async (id: number) => {
-  const response = await apiService.delete('/trip/' + id+"/");
+  const response = await apiService.delete(`/trip/${id}/`);
   return response;
 };
  
