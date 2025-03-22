@@ -11,7 +11,7 @@ export type TripDetailsRequest  ={
     pickup_location: TripLocation;
     dropoff_location: TripLocation;
     current_cycle_hours: number;
-    status: 'planned' | 'in_progress' | 'completed';  
+      
 }
 
 
@@ -22,9 +22,9 @@ export type Trip = {
     current_location_details: TripLocation;
     pickup_location_details: TripLocation;
     dropoff_location_details: TripLocation;
-    current_cycle_hours: number;
-    status: string;
+    current_cycle_hours: number; 
     created_at: string;
+    trip_date: string;
     polyline: string; 
   };
 

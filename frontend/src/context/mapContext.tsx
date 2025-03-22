@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { ReactNode } from "react";
-import { Stop, TripDetailsRequest, TripLocation } from "../types/trip";
+import { Stop, Trip, TripDetailsRequest, TripLocation } from "../types/trip";
 import axios from "axios";
 import { decode } from "@mapbox/polyline";
 import * as tripService from "../services/tripServices";
@@ -17,7 +17,13 @@ const MapContext = createContext<{
   decodedCoordinates: [number, number][];
   tripStops: Stop[];
   fetchSingleTrip: (id: number) => void;
+  isDispayData: boolean;
+  tripData:Trip|null,
+  cleanData:()=>void
 }>({
+  cleanData:()=>{},
+  tripData:null,
+  isDispayData: false,
   fetchSingleTrip: (id: number) => {},
   isFormValid: false,
   setCurrentLocation: (loc: TripLocation | null) => {},
@@ -48,9 +54,12 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const[isDispayData , setDisplayData] = useState<boolean>(true);
   const [tripStops, setTripStops] = useState<Stop[]>([]);
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [tripData, setTripData] = useState<Trip|null>(null);
+
 
   const generateRoute = async () => {
     if (currentLocation && pickup && dropoff) {
@@ -64,7 +73,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
           pickup_location: pickup,
           dropoff_location: dropoff,
           current_cycle_hours: 5.5,
-          status: "planned",
+        
         };
 
         const response = await tripService.plan(data);
@@ -75,6 +84,8 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
         if (response.stops) {
           setTripStops(response.stops);
         }
+        setDisplayData(true);
+        
 
         setSuccessMessage("Route generated successfully!");
       } catch (error) {
@@ -93,7 +104,10 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
     setPickup(null);
     setTripStops([]);
     setIsFormValid(false);
+    setDisplayData(false);
+    setTripData(null);
   };
+
   useEffect(() => {
     return () => {
       cleanData();
@@ -116,6 +130,8 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
       if (response.stops) {
         setTripStops(response.stops);
       }
+      setTripData(response.trip);
+      setDisplayData(true);
 
       setSuccessMessage("Route generated successfully!");
     } catch (error) {
@@ -161,6 +177,9 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
   return (
     <MapContext.Provider
       value={{
+        cleanData,
+        tripData,
+        isDispayData,
         fetchSingleTrip,
         tripStops,
         isFormValid,

@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
-import { TripLocation } from "../../types/trip";
+import { Trip, TripLocation } from "../../types/trip";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import SpeedIcon from "@mui/icons-material/Speed";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
@@ -31,6 +31,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useMapUtils } from "../../context/mapContext";
 import { transparentColor } from "../../utils/constatnts";
+import { useNavigate } from "react-router-dom";
+import { appPaths } from "../../routes/paths";
 
 const StyledBoxContainer = styled(Box)(({ theme }) => ({
   backgroundColor: alpha(transparentColor, 0.4),
@@ -46,8 +48,16 @@ const StyledBoxContainer = styled(Box)(({ theme }) => ({
   margin: theme.spacing(2),
   backdropFilter: "blur(2px)",
 }));
-
 const TripDetails: React.FC = () => {
+  const { isDispayData } = useMapUtils();
+
+  return (
+    <StyledBoxContainer>
+      {isDispayData ? <DisplayTripDetails /> : <TripDetailsForm />}
+    </StyledBoxContainer>
+  );
+};
+const TripDetailsForm: React.FC = () => {
   const {
     isFormValid,
     setCurrentLocation,
@@ -100,221 +110,269 @@ const TripDetails: React.FC = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
   return (
-    <StyledBoxContainer>
+    <Stack mt={10} spacing={8}>
+      <Autocomplete
+        sx={{ ...inputBoxing }}
+        noOptionsText={
+          searchQuery.length < 4
+            ? "Type at least 4 characters..."
+            : "No results found"
+        }
+        slotProps={{
+          popper: {
+            modifiers: [
+              {
+                name: "zIndex",
+                enabled: true,
+                phase: "write",
+                fn: ({ state }) => {
+                  state.elements.popper.style.zIndex = "9999";
+                },
+              },
+            ],
+          },
+        }}
+        options={suggestions}
+        getOptionLabel={(option) => option.address}
+        onInputChange={(_, value) => setSearchQuery(value)}
+        onChange={(_, value) => setCurrentLocation(value)}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Current Location"
+            variant="outlined"
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <MyLocationIcon color="error" />
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+      />
+
+      <Autocomplete
+        sx={{ ...inputBoxing }}
+        noOptionsText={
+          searchQuery.length < 4
+            ? "Type at least 4 characters..."
+            : "No results found"
+        }
+        slotProps={{
+          popper: {
+            modifiers: [
+              {
+                name: "zIndex",
+                enabled: true,
+                phase: "write",
+                fn: ({ state }) => {
+                  state.elements.popper.style.zIndex = "9999";
+                },
+              },
+            ],
+          },
+        }}
+        options={suggestions}
+        getOptionLabel={(option) => option.address}
+        onInputChange={(_, value) => setSearchQuery(value)}
+        onChange={(_, value) => setPickup(value)}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Pickup location"
+            variant="outlined"
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <NearMeIcon color="secondary" />
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+      />
+
+      <Autocomplete
+        sx={{ ...inputBoxing }}
+        noOptionsText={
+          searchQuery.length < 4
+            ? "Type at least 4 characters..."
+            : "No results found"
+        }
+        slotProps={{
+          popper: {
+            modifiers: [
+              {
+                name: "zIndex",
+                enabled: true,
+                phase: "write",
+                fn: ({ state }) => {
+                  state.elements.popper.style.zIndex = "9999";
+                },
+              },
+            ],
+          },
+        }}
+        options={suggestions}
+        getOptionLabel={(option) => option.address}
+        onInputChange={(_, value) => setSearchQuery(value)}
+        onChange={(_, value) => setDropoff(value)}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Dropoff location"
+            variant="outlined"
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <FlagIcon color="primary" />
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+      />
+
+      <FormControl variant="outlined" sx={{ ...inputBoxing }}>
+        <InputLabel>Current Cycle Used (Hrs) </InputLabel>
+        <OutlinedInput
+          type="text"
+          name="username"
+          label="Current Cycle Used (Hrs)"
+          startAdornment={
+            <InputAdornment position="start">
+              <HourglassBottomIcon color="warning" />
+            </InputAdornment>
+          }
+        />
+      </FormControl>
+
+      <FormControl sx={{ ...inputBoxing }} variant="outlined">
+        <InputLabel>Average driving speed </InputLabel>
+        <OutlinedInput
+          type="text"
+          label="Average driving speed"
+          startAdornment={
+            <InputAdornment position="start">
+              <SpeedIcon color="warning" />
+            </InputAdornment>
+          }
+        />
+      </FormControl>
+
+      <FormControl variant="outlined" sx={{ ...inputBoxing }}>
+        <InputLabel>Current date-time </InputLabel>
+        <OutlinedInput
+          type="datetime-local"
+          name="username"
+          label="Current date-time"
+          startAdornment={
+            <InputAdornment position="start">
+              <AccessTimeFilledIcon color="warning" />
+            </InputAdornment>
+          }
+        />
+      </FormControl>
+
+      <Button
+        startIcon={<AutoFixHighIcon />}
+        onClick={() => generateRoute()}
+        size="large"
+        variant="contained"
+        color="primary"
+        disabled={!isFormValid}
+      >
+        Generate a trip plan
+      </Button>
+    </Stack>
+  );
+};
+
+const DisplayTripDetails: React.FC = () => {
+  const { tripData,cleanData } = useMapUtils();
+
+  const navigete = useNavigate();
+  return (
+    <>
       <Stack spacing={4} mb={5}>
         <Stack flexDirection={"row-reverse"}>
-          <IconButton size="large" sx={{ color: "red" }}>
+          <IconButton size="large" sx={{ color: "red", margin: "-20px" }}>
             <DeleteForeverIcon />
           </IconButton>
         </Stack>
+        <Stack direction={"row"} spacing={2}>
+          <Typography variant="body1">Trip Date: </Typography>
+          <Typography fontSize={22} fontWeight={600}>
+            04/12/1998
+          </Typography>
+        </Stack>
+        <StyledLocationItem>
+          <Typography variant="body1">Current Location: </Typography>
+          <Typography fontSize={20}>{/* TT */}</Typography>
+        </StyledLocationItem>
 
+        <StyledLocationItem className="pick">
+          <Typography variant="body1">Pickup Location: </Typography>
+          <Typography fontSize={20}>{/* TT */}</Typography>
+        </StyledLocationItem>
+
+        <StyledLocationItem className="drop">
+          <Typography variant="body1">Dropoff Location: </Typography>
+          <Typography fontSize={20}>{/* TT */}</Typography>
+        </StyledLocationItem>
+
+        <Stack direction={"row"} spacing={2}>
+          <Typography variant="body1">Current Cycle used (Hrs): </Typography>
+          <Typography fontSize={18} fontWeight={600}>
+            {/* TT */}
+          </Typography>
+        </Stack>
+
+        <Stack direction={"row"} spacing={2}>
+          <Typography variant="body1">Average Driving speed : </Typography>
+          <Typography fontSize={18} fontWeight={600}>
+            {/* TT */}
+          </Typography>
+        </Stack>
         <Button
-          onClick={() => generateRoute()}
+           onClick={() => navigete(appPaths.singleLog)}
           size="large"
           variant="contained"
           startIcon={<ViewTimelineIcon />}
-          color="secondary"
+          color="warning"
         >
           Display ELD LOGS
         </Button>
 
         <Button
-          onClick={() => generateRoute()}
+          onClick={() => cleanData()}
           size="large"
           variant="contained"
           startIcon={<ReplayIcon />}
-          color="warning"
+          color="primary"
         >
           Plan new trip
         </Button>
       </Stack>
-      <Stack mt={10} spacing={8}>
-        <Autocomplete
-          sx={{ ...inputBoxing }}
-          noOptionsText={
-            searchQuery.length < 4
-              ? "Type at least 4 characters..."
-              : "No results found"
-          }
-          slotProps={{
-            popper: {
-              modifiers: [
-                {
-                  name: "zIndex",
-                  enabled: true,
-                  phase: "write",
-                  fn: ({ state }) => {
-                    state.elements.popper.style.zIndex = "9999";
-                  },
-                },
-              ],
-            },
-          }}
-          options={suggestions}
-          getOptionLabel={(option) => option.address}
-          onInputChange={(_, value) => setSearchQuery(value)}
-          onChange={(_, value) => setCurrentLocation(value)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Current Location"
-              variant="outlined"
-              InputProps={{
-                ...params.InputProps,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <MyLocationIcon color="error" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          )}
-        />
-
-        <Autocomplete
-          sx={{ ...inputBoxing }}
-          noOptionsText={
-            searchQuery.length < 4
-              ? "Type at least 4 characters..."
-              : "No results found"
-          }
-          slotProps={{
-            popper: {
-              modifiers: [
-                {
-                  name: "zIndex",
-                  enabled: true,
-                  phase: "write",
-                  fn: ({ state }) => {
-                    state.elements.popper.style.zIndex = "9999";
-                  },
-                },
-              ],
-            },
-          }}
-          options={suggestions}
-          getOptionLabel={(option) => option.address}
-          onInputChange={(_, value) => setSearchQuery(value)}
-          onChange={(_, value) => setPickup(value)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Pickup location"
-              variant="outlined"
-              InputProps={{
-                ...params.InputProps,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <NearMeIcon color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          )}
-        />
-
-        <Autocomplete
-          sx={{ ...inputBoxing }}
-          noOptionsText={
-            searchQuery.length < 4
-              ? "Type at least 4 characters..."
-              : "No results found"
-          }
-          slotProps={{
-            popper: {
-              modifiers: [
-                {
-                  name: "zIndex",
-                  enabled: true,
-                  phase: "write",
-                  fn: ({ state }) => {
-                    state.elements.popper.style.zIndex = "9999";
-                  },
-                },
-              ],
-            },
-          }}
-          options={suggestions}
-          getOptionLabel={(option) => option.address}
-          onInputChange={(_, value) => setSearchQuery(value)}
-          onChange={(_, value) => setDropoff(value)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Dropoff location"
-              variant="outlined"
-              InputProps={{
-                ...params.InputProps,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FlagIcon color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          )}
-        />
-
-        <FormControl variant="outlined"  sx={{ ...inputBoxing }}>
-          <InputLabel>Current Cycle Used (Hrs) </InputLabel>
-          <OutlinedInput
-          
-            type="text"
-            name="username"
-            label="Current Cycle Used (Hrs)"
-            startAdornment={
-              <InputAdornment position="start">
-                <HourglassBottomIcon color="warning" />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-
-        <FormControl
-                sx={{...inputBoxing}}
-          variant="outlined"
-        >
-          <InputLabel>Average driving speed </InputLabel>
-          <OutlinedInput
-       
-            type="text"
-            label="Average driving speed"
-            startAdornment={
-              <InputAdornment position="start">
-                <SpeedIcon color="warning" />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-
-        <FormControl variant="outlined"   sx={{ ...inputBoxing }}>
-          <InputLabel>Current date-time </InputLabel>
-          <OutlinedInput
-         
-            type="datetime-local"
-            name="username"
-            label="Current date-time"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccessTimeFilledIcon color="warning" />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-
-        <Button
-          startIcon={<AutoFixHighIcon />}
-          onClick={() => generateRoute()}
-          size="large"
-          variant="contained"
-          color="primary"
-          disabled={!isFormValid}
-        >
-          Generate a trip plan
-        </Button>
-      </Stack>
-    </StyledBoxContainer>
+    </>
   );
 };
+
+const StyledLocationItem = styled(Stack)(({ theme }) => ({
+  backgroundColor: alpha(theme.palette.error.main, 0.3),
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(4),
+  borderRadius: theme.shape.borderRadius,
+  "&.drop": {
+    backgroundColor: alpha(theme.palette.primary.main, 0.3),
+  },
+  "&.pick": {
+    backgroundColor: alpha(theme.palette.secondary.main, 0.3),
+  },
+}));
 
 export default TripDetails;
