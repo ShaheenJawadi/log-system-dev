@@ -85,7 +85,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
           setTripStops(response.stops);
         }
         setDisplayData(true);
-        
+        setTripData(response.trip);
 
         setSuccessMessage("Route generated successfully!");
       } catch (error) {

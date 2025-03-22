@@ -296,6 +296,7 @@ const DisplayTripDetails: React.FC = () => {
   const { tripData,cleanData } = useMapUtils();
 
   const navigete = useNavigate();
+
   return (
     <>
       <Stack spacing={4} mb={5}>
@@ -307,39 +308,39 @@ const DisplayTripDetails: React.FC = () => {
         <Stack direction={"row"} spacing={2}>
           <Typography variant="body1">Trip Date: </Typography>
           <Typography fontSize={22} fontWeight={600}>
-            04/12/1998
+            {tripData?.trip_date}
           </Typography>
         </Stack>
         <StyledLocationItem>
           <Typography variant="body1">Current Location: </Typography>
-          <Typography fontSize={20}>{/* TT */}</Typography>
+          <Typography fontSize={20}>{tripData?.current_location_details.address}</Typography>
         </StyledLocationItem>
 
         <StyledLocationItem className="pick">
           <Typography variant="body1">Pickup Location: </Typography>
-          <Typography fontSize={20}>{/* TT */}</Typography>
+          <Typography fontSize={20}>{tripData?.pickup_location_details.address}</Typography>
         </StyledLocationItem>
 
         <StyledLocationItem className="drop">
           <Typography variant="body1">Dropoff Location: </Typography>
-          <Typography fontSize={20}>{/* TT */}</Typography>
+          <Typography fontSize={20}>{tripData?.dropoff_location_details.address}</Typography>
         </StyledLocationItem>
 
         <Stack direction={"row"} spacing={2}>
           <Typography variant="body1">Current Cycle used (Hrs): </Typography>
           <Typography fontSize={18} fontWeight={600}>
-            {/* TT */}
+          {tripData?.current_cycle_hours}
           </Typography>
         </Stack>
 
         <Stack direction={"row"} spacing={2}>
           <Typography variant="body1">Average Driving speed : </Typography>
           <Typography fontSize={18} fontWeight={600}>
-            {/* TT */}
+         {/*  {tripData?.current_location_details.address} */}
           </Typography>
         </Stack>
         <Button
-           onClick={() => navigete(appPaths.singleLog)}
+           onClick={() => tripData?.id && navigete(appPaths.singleLog.replace(":id", tripData.id.toString()))}
           size="large"
           variant="contained"
           startIcon={<ViewTimelineIcon />}

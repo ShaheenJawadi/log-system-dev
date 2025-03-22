@@ -22,8 +22,7 @@ export type Trip = {
     current_location_details: TripLocation;
     pickup_location_details: TripLocation;
     dropoff_location_details: TripLocation;
-    current_cycle_hours: number; 
-    created_at: string;
+    current_cycle_hours: number;  
     trip_date: string;
     polyline: string;  
   };

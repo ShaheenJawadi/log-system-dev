@@ -16,9 +16,9 @@ class Trip(models.Model):
     pickup_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='trip_pickup')
     dropoff_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='trip_dropoff')
     current_cycle_hours = models.FloatField(help_text="Current cycle hours used")
-    created_at = models.DateTimeField(auto_now_add=True)
+    trip_date = models.DateTimeField(auto_now_add=True)
     polyline = models.TextField(null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trip')
 
 
 class RouteStop(models.Model):

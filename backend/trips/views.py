@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from driver_logs.models import LogEntry, LogDay
+from driver_logs.models import LogEntry, LogDay, LogSheet
 from driver_logs.serializers import LogEntrySerializer, LogDaySerializer
 from .models import Trip, Location, RouteStop
 from .serializers import (TripSerializer, RouteStopSerializer, TripListSerializer)
@@ -51,14 +51,28 @@ class TripViewSet(viewsets.ModelViewSet):
         route_service = RouteService(trip)
         planned_trip = route_service.plan_route()
 
+        log_sheet = LogSheet.objects.create(
+            trip=trip,
+            user=user,
+            date=trip.trip_date,
+            totalMileageToday=0,  # later
+            totalMilesToday=0,  # later
+            OnDutyHoursToday=0,  # later
+            fromLocation=pickup_location.address,
+            toLocation=dropoff_location.address
+
+        );
+
         # complete  data trip
-        response_data = self.get_serialized_trip_data(planned_trip)
+        response_data = self.get_serialized_trip_data(planned_trip, log_sheet.id)
         return Response(response_data)
 
-    def get_serialized_trip_data(self, trip):
+    def get_serialized_trip_data(self, trip, log_sheet_id=None):
         log_days = LogDay.objects.filter(trip=trip).order_by('date')
         stops = RouteStop.objects.filter(trip=trip).order_by('arrival_time')
 
+        if log_sheet_id is not None:
+            log_days.update(log_sheet_id=log_sheet_id)
         # Serialize
         trip_data = TripSerializer(trip).data
         log_days_data = LogDaySerializer(log_days, many=True).data
