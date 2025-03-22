@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'trips',
     'driver_logs',
-    'authentication',
+    'user',
     'rest_framework_simplejwt',
 ]
 REST_FRAMEWORK = {
