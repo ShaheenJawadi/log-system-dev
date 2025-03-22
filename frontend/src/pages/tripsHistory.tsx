@@ -11,118 +11,189 @@ import {
 import Grid from "@mui/material/Grid2";
 import RouteIcon from "@mui/icons-material/Route";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import ShowChartIcon from '@mui/icons-material/ShowChart';
-import MapIcon from '@mui/icons-material/Map';
-import DeleteIcon from '@mui/icons-material/Delete';
-import HotelIcon from '@mui/icons-material/Hotel';
-import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import ShowChartIcon from "@mui/icons-material/ShowChart";
+import MapIcon from "@mui/icons-material/Map";
+import DeleteIcon from "@mui/icons-material/Delete";
+import HotelIcon from "@mui/icons-material/Hotel";
+import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import { useDialog } from "../context/dialogContext";
+import * as tripService from "../services/tripServices";
+import { useEffect, useState } from "react";
+import { Trip } from "../types/trip";
+import { useNavigate } from "react-router-dom";
+import { appPaths } from "../routes/paths";
 const TripsHistory = () => {
-    const { openDialog } = useDialog();
+  const { openDialog } = useDialog();
+
+  const navigate = useNavigate();
+  const [tripData, setTripData] = useState<Trip[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [error, setError] = useState<boolean>(false);
+
+  const fetchList = async () => {
+    try {
+      const response = await tripService.getListTrip();
+
+      setTripData(response);
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchList();
+  }, []);
+  const action=(target:string,id:number )=>{
+
+    if(target==="map"){
+      navigate(appPaths.singleTrip.replace(":id", id.toString()));
+    }
+    if(target==="del"){
+      openDialog("deleteTrip", { id: id });
+    }
+    if(target==="log"){
+      navigate(appPaths.singleLog.replace(":id", id.toString()));
+    }
+  }
+ 
+
   return (
     <Container>
       <Grid container spacing={2} marginY={5}>
-        <Grid size={6}>
-          <Card>
-            <CardContent>
-              <Stack spacing={5}>
-                <Box>
-                  <Typography textAlign={"center"} fontWeight={600} variant="h5" color="primary">
-                    04/12/1998
-                  </Typography>
-                </Box>
-                <Divider/>
-                <Stack spacing={3}  >
-                <Stack flex={1} >
-                    <Typography variant="h6" color="secondary">
-                      Start location:  
-                    </Typography>
-                    <Typography variant="body1"> {/* TT */} 
-                    </Typography>
-                  </Stack>
-                  <Stack flex={1} direction={"row"}>
-                    <Typography variant="h6" color="secondary">
-                      Pickup:  
-                    </Typography>
-                    <Typography variant="body1"> {/* TT */} 
-                    </Typography>
-                  </Stack>
-                  <Stack flex={1} direction={"row"}>
-                    <Typography variant="h6" color="secondary">
-                      Dropoff:  
-                    </Typography>
-                    <Typography variant="body1"> {/* TT */} 
-                    </Typography>
-                  </Stack>
-                </Stack>
-                <Stack spacing={3} justifyContent={"center"} direction={"row"}>
-                  <Stack spacing={1} direction={"row"}> 
-                    <DateRangeIcon color="primary" />
-                    <Typography
-                      textAlign={"center"}
-                      variant="body2" 
-                      fontWeight={600}
-                    >
-                      Total Days:
-                    </Typography>
-                    <Typography>500</Typography>
-                  </Stack>
-                  <Stack spacing={1} direction={"row"}> 
-                    <LocalGasStationIcon color="error" />
-                    <Typography
-                      textAlign={"center"}
-                      variant="body2" 
-                      fontWeight={600}
-                    >
-                      Fueling:
-                    </Typography>
-                    <Typography>2</Typography>
-                  </Stack>
-
-                  <Stack spacing={1} direction={"row"}> 
-                    <HotelIcon color="warning" />
-                    <Typography
-                      textAlign={"center"}
-                      variant="body2" 
-                      fontWeight={600}
-                    >
-                      Rest:
-                    </Typography>
-                    <Typography>4</Typography>
-                  </Stack>
-                  <Stack spacing={1} direction={"row"}> 
-                    <RouteIcon color="primary" />
-                    <Typography
-                      textAlign={"center"}
-                      variant="body2" 
-                      fontWeight={600}
-                    >
-                      Total Miles:
-                    </Typography>
-                    <Typography>500</Typography>
-                  </Stack>
-                  <Stack direction={"row"}></Stack>
-                </Stack>
-                <Divider/>
-
-                <Stack spacing={3} justifyContent={"end"} direction={"row"}>
-                  <Button onClick={()=>openDialog("deleteTrip" , {id:3})} startIcon={<DeleteIcon/>} variant="contained" color="error">
-                    Delete
-                  </Button>
-                  <Button startIcon={<ShowChartIcon/>} variant="contained" color="warning">
-                    Open log
-                  </Button>
-                  <Button startIcon={<MapIcon/>} variant="contained" color="primary">
-                  overview on map
-                  </Button>
-                </Stack>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
+        {tripData.map((trip) => (
+          <SingleGrid action={(target)=>action(target, trip.id)} trip={trip} />
+        ))}
       </Grid>
     </Container>
   );
 };
+
+
+const SingleGrid = ({ trip, action }: { trip: Trip; action: (target:string) => void }) => {
+
+  return (<Grid size={6}>
+    <Card>
+      <CardContent>
+        <Stack spacing={5}>
+          <Box>
+            <Typography
+              textAlign={"center"}
+              fontWeight={600}
+              variant="h5"
+              color="primary"
+            >
+              {trip.trip_date ||"date"}
+            </Typography>
+          </Box>
+          <Divider />
+          <Stack spacing={3}>
+            <Stack flex={1}>
+              <Typography variant="h6" color="secondary">
+                Start location:
+              </Typography>
+              <Typography variant="body1"> {trip.current_location_details.address}</Typography>
+            </Stack>
+            <Stack flex={1} direction={"row"}>
+              <Typography variant="h6" color="secondary">
+                Pickup:
+              </Typography>
+              <Typography variant="body1"> {trip.pickup_location_details.address}</Typography>
+            </Stack>
+            <Stack flex={1} direction={"row"}>
+              <Typography variant="h6" color="secondary">
+                Dropoff:
+              </Typography>
+              <Typography variant="body1"> {trip.dropoff_location_details.address}</Typography>
+            </Stack>
+          </Stack>
+          <Stack
+            spacing={3}
+            justifyContent={"center"}
+            direction={"row"}
+          >
+            <Stack spacing={1} direction={"row"}>
+              <DateRangeIcon color="primary" />
+              <Typography
+                textAlign={"center"}
+                variant="body2"
+                fontWeight={600}
+              >
+                Total Days:
+              </Typography>
+              <Typography>500</Typography>
+            </Stack>
+            <Stack spacing={1} direction={"row"}>
+              <LocalGasStationIcon color="error" />
+              <Typography
+                textAlign={"center"}
+                variant="body2"
+                fontWeight={600}
+              >
+                Fueling:
+              </Typography>
+              <Typography>2</Typography>
+            </Stack>
+
+            <Stack spacing={1} direction={"row"}>
+              <HotelIcon color="warning" />
+              <Typography
+                textAlign={"center"}
+                variant="body2"
+                fontWeight={600}
+              >
+                Rest:
+              </Typography>
+              <Typography>4</Typography>
+            </Stack>
+            <Stack spacing={1} direction={"row"}>
+              <RouteIcon color="primary" />
+              <Typography
+                textAlign={"center"}
+                variant="body2"
+                fontWeight={600}
+              >
+                Total Miles:
+              </Typography>
+              <Typography>500</Typography>
+            </Stack>
+            <Stack direction={"row"}></Stack>
+          </Stack>
+          <Divider />
+
+          <Stack spacing={3} justifyContent={"end"} direction={"row"}>
+            <Button
+              onClick={() => action("del")}
+              startIcon={<DeleteIcon />}
+              variant="contained"
+              color="error"
+            >
+              Delete
+            </Button>
+            <Button
+             onClick={() => action("log")}
+              startIcon={<ShowChartIcon />}
+              variant="contained"
+              color="warning"
+            >
+              Open log
+            </Button>
+            <Button
+             onClick={() => action("map")}
+              startIcon={<MapIcon />}
+              variant="contained"
+              color="primary"
+            >
+              overview on map
+            </Button>
+          </Stack>
+        </Stack>
+      </CardContent>
+    </Card>
+  </Grid>);
+
+}
 
 export default TripsHistory;

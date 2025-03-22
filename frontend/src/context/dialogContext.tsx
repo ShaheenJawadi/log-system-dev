@@ -111,15 +111,16 @@ const DeleteDialog = ({
   target
 }: DeleteDialogProps) => {
 
-  const deleteAction = async () => { 
+  const deleteAction = async () => {  
     try {
         if(target === "deleteTrip"){
             const response = await tripService.deleteTrip(itemId as number);
-            closeDialog();
-        }
-     
+            
+        } 
     } catch (error) {
       console.error("Delete failed", error);
+    } finally {
+      closeDialog();
     }
   };
 

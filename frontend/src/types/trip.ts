@@ -25,7 +25,7 @@ export type Trip = {
     current_cycle_hours: number; 
     created_at: string;
     trip_date: string;
-    polyline: string; 
+    polyline: string;  
   };
 
   export type Stop = {

@@ -54,7 +54,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const[isDispayData , setDisplayData] = useState<boolean>(true);
+  const[isDispayData , setDisplayData] = useState<boolean>(false);
   const [tripStops, setTripStops] = useState<Stop[]>([]);
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false);

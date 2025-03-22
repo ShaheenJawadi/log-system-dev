@@ -18,6 +18,10 @@ class TripSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TripListSerializer(TripSerializer):
+    class Meta:
+        model = Trip
+        exclude = ['polyline']
 
 
 class RouteStopSerializer(serializers.ModelSerializer):

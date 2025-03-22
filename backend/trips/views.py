@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from driver_logs.models import LogEntry, LogDay
 from driver_logs.serializers import LogEntrySerializer, LogDaySerializer
 from .models import Trip, Location, RouteStop
-from .serializers import (TripSerializer, RouteStopSerializer)
+from .serializers import (TripSerializer, RouteStopSerializer, TripListSerializer)
 from .services import RouteService
 
 
@@ -85,4 +85,9 @@ class TripViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         trip = self.get_object()
         response_data = self.get_serialized_trip_data(trip)
+        return Response(response_data)
+
+    def list(self, request, *args, **kwargs):
+        trips = self.get_queryset()
+        response_data = TripListSerializer(trips, many=True).data
         return Response(response_data)
