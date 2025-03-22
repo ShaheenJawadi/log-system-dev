@@ -6,3 +6,12 @@ export const plan = async (data: TripDetailsRequest) => {
   return response;
 };
  
+
+
+
+export const deleteTrip = async (id: number) => {
+  const response = await apiService.delete('/trip/' + id+"/");
+  return response;
+};
+ 
+ 

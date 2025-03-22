@@ -77,7 +77,7 @@ const LogsHistory = () => {
                 <Divider/>
 
                 <Stack spacing={3} justifyContent={"end"} direction={"row"}>
-                  <Button onClick={()=>openDialog("deleteLog" , {id:1})} startIcon={<DeleteIcon/>} variant="contained" color="error">
+                  <Button onClick={()=>openDialog("deleteLog" , {id:3})} startIcon={<DeleteIcon/>} variant="contained" color="error">
                     Delete
                   </Button>
                   <Button startIcon={<ShowChartIcon/>} variant="contained" color="primary">
