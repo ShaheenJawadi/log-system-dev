@@ -1,7 +1,7 @@
 import { Box, Container, Stack } from "@mui/material";
-import DailyDriverLogTab from "../components/driver_logs/dailyLogTab";
-import { HourRecapSection, LogHeaderSection, ShippingSection } from "../components/driver_logs/dailyRecord";
-import { LogEntry } from "../types/logs";
+import DailyDriverLogTab from "../../components/driver_logs/dailyLogTab";
+import { HourRecapSection, LogHeaderSection, ShippingSection } from "../../components/driver_logs/dailyRecord";
+import { LogEntry } from "../../types/logs";
 
 const DriverLog = () => {
   const logData: LogEntry[] = [

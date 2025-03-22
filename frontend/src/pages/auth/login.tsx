@@ -15,9 +15,9 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { appPaths } from "../routes/paths";
-import * as authService from "../services/authServices";  
-import { setToken , setRefreshToken, getToken } from "../utils/token";
+import { appPaths } from "../../routes/paths";
+import * as authService from "../../services/authServices";  
+import { setToken , setRefreshToken, getToken } from "../../utils/token";
 
 const LoginPage = () => {
   const navigate = useNavigate();

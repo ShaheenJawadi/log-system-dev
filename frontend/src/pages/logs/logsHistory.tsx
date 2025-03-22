@@ -14,7 +14,7 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import MapIcon from '@mui/icons-material/Map';
 import DeleteIcon from '@mui/icons-material/Delete'; 
-import { useDialog } from "../context/dialogContext";
+import { useDialog } from "../../context/dialogContext";
 const LogsHistory = () => {
   const { openDialog } = useDialog();
   

@@ -16,12 +16,12 @@ import MapIcon from "@mui/icons-material/Map";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HotelIcon from "@mui/icons-material/Hotel";
 import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
-import { useDialog } from "../context/dialogContext";
-import * as tripService from "../services/tripServices";
+import { useDialog } from "../../context/dialogContext";
+import * as tripService from "../../services/tripServices";
 import { useEffect, useState } from "react";
-import { Trip } from "../types/trip";
+import { Trip } from "../../types/trip";
 import { useNavigate } from "react-router-dom";
-import { appPaths } from "../routes/paths";
+import { appPaths } from "../../routes/paths";
 const TripsHistory = () => {
   const { openDialog } = useDialog();
 
