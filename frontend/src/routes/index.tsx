@@ -9,35 +9,94 @@ import AuthPageHolder from "../components/auth/pageHolder";
 import { appPaths } from "./paths";
 import AuthRoute from "./authRoute";
 import PrivateRoute from "./privateRoute";
- 
+import LogsHistory from "../pages/logsHistory";
+import TripsHistory from "../pages/tripsHistory";
 
 export const routes: RouteObject[] = [
-
   {
     path: appPaths.login,
-    element:<AuthRoute element={<AuthPageHolder title={"Login "}><LoginPage/></AuthPageHolder>} /> ,  
-  } 
+    element: (
+      <AuthRoute
+        element={
+          <AuthPageHolder title={"Login "}>
+            <LoginPage />
+          </AuthPageHolder>
+        }
+      />
+    ),
+  },
 
-  ,
   {
     path: appPaths.register,
-    element:<AuthRoute element={<AuthPageHolder  title={"Register "}><RegisterPage/></AuthPageHolder>} />,  
-  } ,
+    element: (
+      <AuthRoute
+        element={
+          <AuthPageHolder title={"Register "}>
+            <RegisterPage />
+          </AuthPageHolder>
+        }
+      />
+    ),
+  },
   {
     path: appPaths.home,
-    element:    <PrivateRoute element={<MainPageContainer title=""><Home/></MainPageContainer>} />,  
-  } ,
+    element: (
+      <PrivateRoute
+        element={
+          <MainPageContainer title="">
+            <Home />
+          </MainPageContainer>
+        }
+      />
+    ),
+  },
   {
     path: appPaths.newTrip,
-    element: <PrivateRoute element={<MainPageContainer title="Plan a Trip"><NewTrip/></MainPageContainer>} />,  
-  } 
-  ,
+    element: (
+      <PrivateRoute
+        element={
+          <MainPageContainer title="Plan a Trip">
+            <NewTrip />
+          </MainPageContainer>
+        }
+      />
+    ),
+  },
+
   {
-    path: appPaths.myLogs,
-    element:  <PrivateRoute element={ <MainPageContainer title="Trip History" ><DriverLog/></MainPageContainer>} />,  
-  } 
-
-
-  ,
-
+    path: appPaths.tripsHistory,
+    element: (
+      <PrivateRoute
+        element={
+          <MainPageContainer title="Trips History">
+            <TripsHistory />
+          </MainPageContainer>
+        }
+      />
+    ),
+  },
+  {
+    path: appPaths.logsHistory,
+    element: (
+      <PrivateRoute
+        element={
+          <MainPageContainer title="Logs History">
+            <LogsHistory />
+          </MainPageContainer>
+        }
+      />
+    ),
+  },
+  {
+    path: appPaths.newLog,
+    element: (
+      <PrivateRoute
+        element={
+          <MainPageContainer title="Manual Log Entry">
+            <DriverLog />
+          </MainPageContainer>
+        }
+      />
+    ),
+  },
 ];

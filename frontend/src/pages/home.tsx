@@ -42,15 +42,15 @@ const Home: React.FC = () => {
       icon: <PolylineIcon sx={{ color: "#fff", fontSize: 140 }} />,
     },
     {
-      label: " Trip History ",
-      path: appPaths.history,
+      label: " Trips History ",
+      path: appPaths.tripsHistory,
       color: "#fff",
       bg: "#051830",
       icon: <HistoryIcon sx={{ color: "#fff", fontSize: 140 }} />,
     },
     {
       label: " Manual Log Entry ",
-      path: appPaths.newEld,
+      path: appPaths.newLog,
       color: "#fff",
       bg: "#008080",
       icon: (
@@ -58,8 +58,8 @@ const Home: React.FC = () => {
       ),
     },
     {
-      label: " My Logs ",
-      path: appPaths.myLogs,
+      label: "Logs History ",
+      path: appPaths.logsHistory,
       color: "#fff",
       bg: "#051830",
       icon: (
