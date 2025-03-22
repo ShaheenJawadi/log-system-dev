@@ -11,13 +11,13 @@ import {
   Typography,
   FormHelperText,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { appPaths } from "../routes/paths";
 import * as authService from "../services/authServices";  
-import { setToken } from "../utils/token";
+import { setToken , setRefreshToken, getToken } from "../utils/token";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -37,8 +37,10 @@ const LoginPage = () => {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         const response = await authService.login(values);
-        console.log("Login successful", response.tokens); 
         setToken(response.tokens.access);
+        setRefreshToken(response?.tokens?.refresh || '');
+     
+        window.location.href = appPaths.home;
       } catch (error) { 
         console.error("Login failed", error);
       } finally {

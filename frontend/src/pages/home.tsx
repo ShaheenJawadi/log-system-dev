@@ -16,7 +16,9 @@ import PolylineIcon from "@mui/icons-material/Polyline";
 import HistoryIcon from "@mui/icons-material/History";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import { useNavigate } from "react-router-dom";
-
+import SettingsIcon from '@mui/icons-material/Settings';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import { useAuth } from "../context/authContext";
 const IconHolder = styled(Box)(({ theme }) => ({
   position: "absolute",
   bottom: 1,
@@ -32,16 +34,6 @@ const BtnCard = styled(Card)(({ theme }) => ({
 
 const Home: React.FC = () => {
   const btnsMenu = [
-   
-    {
-      label: " Manual Log Entry ",
-      path: appPaths.newEld,
-      color: "#fff",
-      bg: "#051830",
-      icon: (
-        <DriveFileRenameOutlineIcon sx={{ color: "#fff", fontSize: 140 }} />
-      ),
-    },
     {
       label: "Plan a Trip",
       path: appPaths.newTrip,
@@ -53,12 +45,39 @@ const Home: React.FC = () => {
       label: " Trip History ",
       path: appPaths.history,
       color: "#fff",
-      bg: "#008080",
+      bg: "#051830",
       icon: <HistoryIcon sx={{ color: "#fff", fontSize: 140 }} />,
     },
     {
-      label: " Logout ",
-      path: appPaths.history,
+      label: " Manual Log Entry ",
+      path: appPaths.newEld,
+      color: "#fff",
+      bg: "#008080",
+      icon: (
+        <DriveFileRenameOutlineIcon sx={{ color: "#fff", fontSize: 140 }} />
+      ),
+    },
+    {
+      label: " My Logs ",
+      path: appPaths.myLogs,
+      color: "#fff",
+      bg: "#051830",
+      icon: (
+        <Inventory2Icon sx={{ color: "#fff", fontSize: 140 }} />
+      ),
+    },
+    {
+      label: "Settings",
+      path: appPaths.setting,
+      color: "#fff",
+      bg: "#008080",
+      icon: <SettingsIcon sx={{ color: "#fff", fontSize: 140 }} />,
+    },
+   
+  
+    {
+      label: "Logout",
+      path: null,
       color: "#fff",
       bg: "#f84960",
       icon: <LogoutIcon sx={{ color: "#fff", fontSize: 140 }} />,
@@ -66,7 +85,20 @@ const Home: React.FC = () => {
   ];
 
   const navigate = useNavigate();
+  const {logout} = useAuth();
 
+
+  const clickAction =(btn: any)=>{
+    if(btn.label === "Logout"){ 
+      
+      logout();
+      
+    }
+    else { 
+      navigate(btn.path)
+    }
+ 
+  }
   return (
     <Container>
       <Stack
@@ -75,9 +107,9 @@ const Home: React.FC = () => {
       >
         <Grid container spacing={3}>
           {btnsMenu.map((btn) => (
-            <Grid size={6}>
+            <Grid size={4}>
               <BtnCard
-                onClick={() => navigate(btn.path)}
+                onClick={() => clickAction(btn)}
                 sx={{ height: 365, backgroundColor: btn.bg, color: btn.color }}
               >
                 <IconHolder>{btn.icon}</IconHolder>
