@@ -45,7 +45,6 @@ class TripViewSet(viewsets.ModelViewSet):
             pickup_location=pickup_location,
             dropoff_location=dropoff_location,
             current_cycle_hours=request.data.get('current_cycle_hours'),
-            status=request.data.get('status'),
             user=user
         )
 

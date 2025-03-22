@@ -5,6 +5,7 @@ import axios from "axios";
 import { decode } from "@mapbox/polyline";
 import * as tripService from "../services/tripServices";
 import { MapPin } from "../types/map";
+import { useLocation } from "react-router-dom";
 
 const MapContext = createContext<{
   isFormValid: boolean;
@@ -14,10 +15,10 @@ const MapContext = createContext<{
   generateRoute: () => void;
   pinLocations: MapPin[];
   decodedCoordinates: [number, number][];
-    tripStops: Stop[];
-    fetchSingleTrip: (id:number) => void;
+  tripStops: Stop[];
+  fetchSingleTrip: (id: number) => void;
 }>({
-  fetchSingleTrip: (id:number) => {},
+  fetchSingleTrip: (id: number) => {},
   isFormValid: false,
   setCurrentLocation: (loc: TripLocation | null) => {},
   setPickup: (loc: TripLocation | null) => {},
@@ -25,12 +26,13 @@ const MapContext = createContext<{
   generateRoute: () => {},
   pinLocations: [],
   decodedCoordinates: [],
-  tripStops:[],
+  tripStops: [],
 });
 
 export const useMapUtils = () => useContext(MapContext);
 
 export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
+  const location = useLocation();
   const [decodedCoordinates, setDecodedCoordinates] = useState<
     [number, number][]
   >([]);
@@ -84,36 +86,44 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const fetchSingleTrip = async (id:number) => {
- 
-      setLoading(true);
-      setError(null);
-      setSuccessMessage(null);
+  const cleanData = () => {
+    setDecodedCoordinates([]);
+    setCurrentLocation(null);
+    setDropoff(null);
+    setPickup(null);
+    setTripStops([]);
+    setIsFormValid(false);
+  };
+  useEffect(() => {
+    return () => {
+      cleanData();
+    };
+  }, [location]);
+  const fetchSingleTrip = async (id: number) => {
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
 
-      try {
-      
+    try {
+      const response = await tripService.getSingleTrip(5);
+      setCurrentLocation(response.trip.current_location_details);
+      setDropoff(response.trip.dropoff_location_details);
+      setPickup(response.trip.pickup_location_details);
 
-        const response = await tripService.getSingleTrip(5);
-        setCurrentLocation(response.trip.current_location_details);
-        setDropoff(response.trip.dropoff_location_details);
-        setPickup(response.trip.pickup_location_details);
-
-
-        if (response.trip.polyline) {
-          setDecodedCoordinates(decode(response.trip.polyline));
-        }
-        if (response.stops) {
-          setTripStops(response.stops);
-        }
-
-        setSuccessMessage("Route generated successfully!");
-      } catch (error) {
-        console.error("Error generating route:", error);
-        setError("Failed to generate route. Please try again later.");
-      } finally {
-        setLoading(false);
+      if (response.trip.polyline) {
+        setDecodedCoordinates(decode(response.trip.polyline));
       }
-  
+      if (response.stops) {
+        setTripStops(response.stops);
+      }
+
+      setSuccessMessage("Route generated successfully!");
+    } catch (error) {
+      console.error("Error generating route:", error);
+      setError("Failed to generate route. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     setPinLocations(() => {
