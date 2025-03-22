@@ -1,16 +1,17 @@
 import { RouteObject } from "react-router-dom";
 import Home from "../pages/home";
 import MainPageContainer from "../components/mainPagesContainer";
-import NewTrip from "../pages/newTrip";
-import DriverLog from "../pages/driverlog";
-import LoginPage from "../pages/login";
-import RegisterPage from "../pages/register";
+import NewTrip from "../pages/trips/newTrip";
+import DriverLog from "../pages/logs/driverlog";
+import LoginPage from "../pages/auth/login";
+import RegisterPage from "../pages/auth/register";
 import AuthPageHolder from "../components/auth/pageHolder";
 import { appPaths } from "./paths";
 import AuthRoute from "./authRoute";
 import PrivateRoute from "./privateRoute";
-import LogsHistory from "../pages/logsHistory";
-import TripsHistory from "../pages/tripsHistory";
+import LogsHistory from "../pages/logs/logsHistory";
+import TripsHistory from "../pages/trips/tripsHistory";
+import TripOverView from "../pages/trips/TripOverview";
 
 export const routes: RouteObject[] = [
   {
@@ -94,6 +95,19 @@ export const routes: RouteObject[] = [
         element={
           <MainPageContainer title="Manual Log Entry">
             <DriverLog />
+          </MainPageContainer>
+        }
+      />
+    ),
+  },
+
+  {
+    path: appPaths.singleTrip,
+    element: (
+      <PrivateRoute
+        element={
+          <MainPageContainer title="Trip Details">
+            <TripOverView />
           </MainPageContainer>
         }
       />

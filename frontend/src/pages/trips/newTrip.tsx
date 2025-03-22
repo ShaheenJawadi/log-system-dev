@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-
+ 
 import "leaflet/dist/leaflet.css";
 import { Box, Stack, useTheme } from "@mui/material";
 import TripDetails from "../../components/newTrip/tripDetails";
