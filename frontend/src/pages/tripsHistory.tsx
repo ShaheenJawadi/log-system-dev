@@ -29,17 +29,25 @@ const TripsHistory = () => {
                     04/12/1998
                   </Typography>
                 </Box>
-                <Stack spacing={5} direction={"row"}>
-                  <Stack flex={1} direction={"row"}>
+                <Divider/>
+                <Stack spacing={3}  >
+                <Stack flex={1} >
                     <Typography variant="h6" color="secondary">
-                      From:  
+                      Start location:  
                     </Typography>
                     <Typography variant="body1"> {/* TT */} 
                     </Typography>
                   </Stack>
                   <Stack flex={1} direction={"row"}>
                     <Typography variant="h6" color="secondary">
-                      To:  
+                      Pickup:  
+                    </Typography>
+                    <Typography variant="body1"> {/* TT */} 
+                    </Typography>
+                  </Stack>
+                  <Stack flex={1} direction={"row"}>
+                    <Typography variant="h6" color="secondary">
+                      Dropoff:  
                     </Typography>
                     <Typography variant="body1"> {/* TT */} 
                     </Typography>
