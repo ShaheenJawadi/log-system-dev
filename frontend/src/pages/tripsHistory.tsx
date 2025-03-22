@@ -16,7 +16,9 @@ import MapIcon from '@mui/icons-material/Map';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HotelIcon from '@mui/icons-material/Hotel';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import { useDialog } from "../context/dialogContext";
 const TripsHistory = () => {
+    const { openDialog } = useDialog();
   return (
     <Container>
       <Grid container spacing={2} marginY={5}>
@@ -104,7 +106,7 @@ const TripsHistory = () => {
                 <Divider/>
 
                 <Stack spacing={3} justifyContent={"end"} direction={"row"}>
-                  <Button startIcon={<DeleteIcon/>} variant="contained" color="error">
+                  <Button onClick={()=>openDialog("deleteLog" , {id:1})} startIcon={<DeleteIcon/>} variant="contained" color="error">
                     Delete
                   </Button>
                   <Button startIcon={<ShowChartIcon/>} variant="contained" color="warning">

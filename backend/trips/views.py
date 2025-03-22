@@ -86,3 +86,9 @@ class TripViewSet(viewsets.ModelViewSet):
         }
 
         return response_data
+
+
+    def destroy(self, request, *args, **kwargs):
+        trip = self.get_object() 
+        trip.delete()
+        return Response({"message": "Trip deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
