@@ -1,16 +1,17 @@
 
-import { useState, useEffect } from "react";
-
-import "leaflet/dist/leaflet.css";
-import { Box, Stack, useTheme } from "@mui/material";
-import TripDetails from "../../components/newTrip/tripDetails";
-
-import TripStops from "../../components/newTrip/stops";
-import MapComponant from "../../components/map";
-import { headerHeight } from "../../utils/constatnts";
+import {  useEffect } from "react";
 import NewTrip from "./newTrip";
+import { useMapUtils } from "../../context/mapContext";
+import { useParams } from "react-router-dom";
 
 const TripOverView: React.FC = () => {
+
+      const { fetchSingleTrip } = useMapUtils();
+      const { id } = useParams<{ id: string }>();
+        useEffect(() => {
+            if(id)
+            fetchSingleTrip(parseInt(id));
+        }, [id]);
     return (
       <>
         <NewTrip/>
