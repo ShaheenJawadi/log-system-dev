@@ -19,9 +19,10 @@ import * as logService from "../../services/logServices";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { LogDay } from "../../types/logs"; 
+import { useDialog } from "../../context/dialogContext";
 const LogsHistory = () => { 
   const navigate = useNavigate();
-
+  const { openDialog } = useDialog();
   const [logsData, setLogsData] = useState<LogDay[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -48,6 +49,10 @@ const LogsHistory = () => {
     }
     else if(target=="openMap"){ 
       navigate(appPaths.singleTrip.replace(":id", tripId.toString())); 
+    }
+    else if(target=="delete"){
+      openDialog("deleteLog", { id: id });
+
     }
   }
   return (
@@ -131,7 +136,7 @@ const SingleLogGrid = ({single,action}:{single:LogDay , action:(target:'openMap'
 
             <Stack spacing={3} justifyContent={"end"} direction={"row"}>
               <Button
-               // onClick={() => openDialog("deleteLog", { id: 3 })}
+               onClick={() => action("delete" )}
                 startIcon={<DeleteIcon />}
                 variant="contained"
                 color="error"

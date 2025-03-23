@@ -14,3 +14,10 @@ export const singleLog = async (id: number) => {
 };
  
  
+
+export const deleteLog = async (id: number) => {
+  const response = await apiService.delete(`/logs/${id}/`);
+  return response;
+};
+ 
+ 

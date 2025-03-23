@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import SettingsIcon from '@mui/icons-material/Settings';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { useAuth } from "../context/authContext";
+import { useDialog } from "../context/dialogContext";
 const IconHolder = styled(Box)(({ theme }) => ({
   position: "absolute",
   bottom: 1,
@@ -68,7 +69,7 @@ const Home: React.FC = () => {
     },
     {
       label: "Settings",
-      path: appPaths.setting,
+      path: null,
       color: "#fff",
       bg: "#008080",
       icon: <SettingsIcon sx={{ color: "#fff", fontSize: 140 }} />,
@@ -85,6 +86,7 @@ const Home: React.FC = () => {
   ];
 
   const navigate = useNavigate();
+  const {openDialog} = useDialog();
   const {logout} = useAuth();
 
 
@@ -92,6 +94,12 @@ const Home: React.FC = () => {
     if(btn.label === "Logout"){ 
       
       logout();
+      
+    }
+
+    else if(btn.label === "Settings"){ 
+      
+      openDialog("openSetting", { id: 0 });
       
     }
     else { 

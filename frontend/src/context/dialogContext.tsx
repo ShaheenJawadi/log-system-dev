@@ -8,8 +8,9 @@ import {
   Button,
 } from "@mui/material";
 import * as tripService from "../services/tripServices";
-
-type DialogType = "deleteTrip" | "deleteLog" | null;
+import * as logService from "../services/logServices";
+import SettingForm from "../components/settingForm";
+type DialogType = "deleteTrip" | "deleteLog" | "openSetting" | null;
 
 type DialogOptions = {
   title: string;
@@ -43,80 +44,54 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
     setDialogType(null);
   };
 
-  const renderDialogContent = () => {
-    switch (dialogType) {
-      case "deleteLog":
-        return {
-          title: "Delete Trip Confirmation",
-          content: [
-            "Are you sure you want to delete this Log sheet?",
-            "Related trip will also be deleted",
-            "This action cannot be undone⚠️",
-          ],
-          actions: [
-            { label: "No", onClick: closeDialog },
-            { label: "Yes, Delete", onClick: () => console.log("deelll") },
-          ],
-        };
 
-      case "deleteTrip":
-        return {
-          title: "Delete Log Sheet Confirmation",
-          content: [
-            "Are you sure you want to delete this Trips?",
-            "Related Log sheet will also be deleted",
-            "This action cannot be undone⚠️",
-          ],
-          actions: [
-            { label: "No", onClick: closeDialog },
-            { label: "Yes, Delete", onClick: () => console.log("deelll") },
-          ],
-        };
-      default:
-        return null;
-    }
-  };
-
-  const dialogOptions: DialogOptions | null = renderDialogContent();
-
+  
+ 
   return (
     <DialogContext.Provider value={{ openDialog, closeDialog }}>
       {children}
-      {dialogOptions && (
-        <DeleteDialog
-        target={dialogType}
-          itemId={itemId}
-          dialogOptions={dialogOptions}
-          dialogOpen={dialogOpen}
-          closeDialog={closeDialog}
-        />
-      )}
+
+      <Dialog
+        open={dialogOpen}
+        fullWidth={true}
+        maxWidth={"sm"}
+        onClose={closeDialog}
+      >
+   
+            {(dialogType=="openSetting"  )&& (
+          <SettingForm closeDialog={closeDialog}/>
+        )}
+   
+        {(dialogType=="deleteLog"||dialogType=="deleteTrip"  )&& (
+          <DeleteDialog
+            target={dialogType}
+            itemId={itemId} 
+            closeDialog={closeDialog}
+          />
+        )}
+      </Dialog>
     </DialogContext.Provider>
   );
 };
 
-interface DeleteDialogProps {
-  dialogOptions: DialogOptions;
-  dialogOpen: boolean;
+interface DeleteDialogProps { 
   closeDialog: () => void;
   itemId: number | null;
   target: DialogType;
 }
 
-const DeleteDialog = ({
-  dialogOptions,
-  dialogOpen,
+const DeleteDialog = ({ 
   closeDialog,
   itemId,
-  target
+  target,
 }: DeleteDialogProps) => {
-
-  const deleteAction = async () => {  
+  const deleteAction = async () => {
     try {
-        if(target === "deleteTrip"){
-            const response = await tripService.deleteTrip(itemId as number);
-            
-        } 
+      if (target === "deleteTrip") {
+        const response = await tripService.deleteTrip(itemId as number);
+      } else if (target === "deleteLog") {
+        const response = await logService.deleteLog(itemId as number);
+      }
     } catch (error) {
       console.error("Delete failed", error);
     } finally {
@@ -125,23 +100,24 @@ const DeleteDialog = ({
   };
 
   return (
-    <Dialog
-      open={dialogOpen}
-      fullWidth={true}
-      maxWidth={"sm"}
-      onClose={closeDialog}
-    >
-      <DialogTitle>{dialogOptions.title}</DialogTitle>
+    <>
+      <DialogTitle>Delete Confirmation</DialogTitle>
       <DialogContent>
-        <DialogContentText>{dialogOptions.content}</DialogContentText>
+        <DialogContentText>
+          Are you sure you want to delete this Log sheet?
+          <br />
+          Related trip will also be deleted <br /> This action cannot be
+          undone⚠️
+        </DialogContentText>
       </DialogContent>
       <DialogActions>
-        {dialogOptions.actions.map((action, index) => (
-          <Button key={index} onClick={()=>deleteAction()} color="primary">
-            {action.label}
-          </Button>
-        ))}
+        <Button onClick={() => closeDialog()} color="primary">
+          No
+        </Button>
+        <Button onClick={() => deleteAction()} color="primary">
+          Yes, Delete
+        </Button>
       </DialogActions>
-    </Dialog>
+    </>
   );
 };
