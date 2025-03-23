@@ -12,6 +12,7 @@ import PrivateRoute from "./privateRoute";
 import LogsHistory from "../pages/logs/logsHistory";
 import TripsHistory from "../pages/trips/tripsHistory";
 import TripOverView from "../pages/trips/TripOverview";
+import ELDEntryForm from "../pages/logs/manual";
 
 export const routes: RouteObject[] = [
   {
@@ -94,13 +95,24 @@ export const routes: RouteObject[] = [
       <PrivateRoute
         element={
           <MainPageContainer title="Manual Log Entry">
-            <DriverLog />
+           <ELDEntryForm />
           </MainPageContainer>
         }
       />
     ),
   },
-
+  {
+    path: appPaths.singleLog,
+    element: (
+      <PrivateRoute
+        element={
+          <MainPageContainer title="Log preview">
+            <DriverLog />  
+          </MainPageContainer>
+        }
+      />
+    ),
+  },
   {
     path: appPaths.singleTrip,
     element: (

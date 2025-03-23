@@ -15,9 +15,11 @@ import ShowChartIcon from '@mui/icons-material/ShowChart';
 import MapIcon from '@mui/icons-material/Map';
 import DeleteIcon from '@mui/icons-material/Delete'; 
 import { useDialog } from "../../context/dialogContext";
+import { appPaths } from "../../routes/paths";
+import { useNavigate } from "react-router-dom";
 const LogsHistory = () => {
   const { openDialog } = useDialog();
-  
+  const navigate = useNavigate();
   return (
     <Container> 
       <Grid container spacing={2} marginY={5}>
@@ -80,7 +82,7 @@ const LogsHistory = () => {
                   <Button onClick={()=>openDialog("deleteLog" , {id:3})} startIcon={<DeleteIcon/>} variant="contained" color="error">
                     Delete
                   </Button>
-                  <Button startIcon={<ShowChartIcon/>} variant="contained" color="primary">
+                  <Button onClick={()=> navigate(appPaths.singleLog.replace(":id", "5"))} startIcon={<ShowChartIcon/>} variant="contained" color="primary">
                     Open log
                   </Button>
                  

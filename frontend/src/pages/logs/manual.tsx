@@ -23,7 +23,7 @@ import {
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { LogEntry, LogEntryType } from "../types/logs";
+import { LogEntry, LogEntryType } from "../../types/logs";
 
  
 const initialLog: LogEntry = {
