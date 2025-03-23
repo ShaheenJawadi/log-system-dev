@@ -59,7 +59,6 @@ class TripViewSet(viewsets.ModelViewSet):
 
         for log_day in log_days:
             log_sheet = LogSheet.objects.create(
-                trip=trip,
                 user=user,
                 date=log_day.date,
                 totalMileageToday=0,

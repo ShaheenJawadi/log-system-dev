@@ -5,9 +5,7 @@ from trips.models import Trip
 
 
 class LogSheet(models.Model):
-    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='log_sheet', null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='log_sheets_driver')
-
     totalMilesToday = models.IntegerField(null=True, blank=True)
     totalMileageToday = models.IntegerField(null=True, blank=True)
     truckInfo = models.CharField(max_length=255, null=True, blank=True)
