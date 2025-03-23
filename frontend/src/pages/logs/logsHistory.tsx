@@ -46,7 +46,7 @@ const LogsHistory = () => {
     if(target=="singleLog"){
       navigate(appPaths.singleLog.replace(":id", id.toString())); 
     }
-    else if(target=="openMap"){
+    else if(target=="openMap"){ 
       navigate(appPaths.singleTrip.replace(":id", tripId.toString())); 
     }
   }
@@ -54,9 +54,9 @@ const LogsHistory = () => {
     <Container>
       <Grid container spacing={2} marginY={5}>
         {
-          logsData.map((log) => {
+          logsData.map((log , index) => {
             return (
-              <SingleLogGrid action={(target)=>clickAction(target , log.id , log.trip)} single ={log} />
+              <SingleLogGrid key={index} action={(target)=>clickAction(target , log.id , log.trip)} single ={log} />
             );
           })
         }

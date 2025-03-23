@@ -300,11 +300,7 @@ const DisplayTripDetails: React.FC = () => {
   return (
     <>
       <Stack spacing={4} mb={5}>
-        <Stack flexDirection={"row-reverse"}>
-          <IconButton size="large" sx={{ color: "red", margin: "-20px" }}>
-            <DeleteForeverIcon />
-          </IconButton>
-        </Stack>
+       
         <Stack direction={"row"} spacing={2}>
           <Typography variant="body1">Trip Date: </Typography>
           <Typography fontSize={22} fontWeight={600}>

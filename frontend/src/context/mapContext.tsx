@@ -119,7 +119,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
     setSuccessMessage(null);
 
     try {
-      const response = await tripService.getSingleTrip(5);
+      const response = await tripService.getSingleTrip(id);
       setCurrentLocation(response.trip.current_location_details);
       setDropoff(response.trip.dropoff_location_details);
       setPickup(response.trip.pickup_location_details);

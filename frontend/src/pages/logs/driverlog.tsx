@@ -13,12 +13,41 @@ import DriverSheet from "../../components/driver_logs/sheet";
 import EditIcon from "@mui/icons-material/Edit";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
+ 
+import * as logService from "../../services/logServices";
+import { useEffect, useState } from "react";
+import { LogDay } from "../../types/logs";
+import { useParams } from "react-router-dom";
+
 const DriverLog = () => {
+
+  const { id } = useParams<{ id: string }>();
+  const [logsData, setLogsData] = useState<LogDay>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [error, setError] = useState<boolean>(false);
+
+  const fetchSingleLog = async (id: number) => {
+    try {
+      const response = await logService.singleLog(id);
+
+      setLogsData(response);
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) fetchSingleLog(parseInt(id));
+  }, [id]);
+ 
   return (
     <Container>
       <Stack paddingY={5} spacing={8}>
         <Stack alignItems={"center"} direction={"row"} spacing={2}>
-          <Button startIcon={<EditIcon />} variant="contained" color="warning">
+          <Button disabled={!!logsData?.trip} startIcon={<EditIcon />} variant="contained" color="warning">
             Edit
           </Button>
           <Divider sx={{ flex: 1 }} />
@@ -33,20 +62,24 @@ const DriverLog = () => {
             </ButtonGroup>
           </Stack>
         </Stack>
-        <Box>
+        {
+          logsData?.date &&<Box>
           <Typography fontSize={20} fontWeight={600} color="#818181">
             ⚠️ This log sheet is associated with a trip that spans 4 days and
             cannot be modified
           </Typography>
-        </Box>
+       
         <Grid justifyContent={"center"} container spacing={7}>
           <Button variant="outlined">day 1</Button>
           <Button variant="contained">day 2</Button>
           <Button variant="contained">day 3</Button>
           <Button variant="contained">day 4</Button>
         </Grid>
-        <Box borderColor={"primary.main"} border={1} padding={2}>
-          <DriverSheet />
+        </Box>
+        }
+        
+        <Box borderColor={"primary.main"} border={1} sx={{background:"#fff"}} padding={2}>
+          <DriverSheet logsData={logsData||null} />
         </Box>
       </Stack>
     </Container>
