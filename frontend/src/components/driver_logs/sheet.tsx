@@ -1,11 +1,13 @@
 import { Box, Container, Stack } from "@mui/material";
 import DailyDriverLogTab from "../../components/driver_logs/dailyLogTab";
-import { HourRecapSection, LogHeaderSection, ShippingSection } from "../../components/driver_logs/dailyRecord";
-import { LogEntry } from "../../types/logs";
+import {
+  HourRecapSection,
+  LogHeaderSection,
+  ShippingSection,
+} from "../../components/driver_logs/dailyRecord";
+import { LogEntry, LogSheet } from "../../types/logs";
 
 const DriverSheet = () => {
-
-  
   const logData: LogEntry[] = [
     { type: "off", start: 0, end: 2.75, remark: "Resting in Little Rock, AR" },
     { type: "sb", start: 2.75, end: 5, remark: "Sleep break before driving" },
@@ -43,14 +45,16 @@ const DriverSheet = () => {
     },
   ];
 
+  const mockLogSheet: LogSheet = {};
+
   return (
-    <Container>
-      <LogHeaderSection />
+    <>
+      <LogHeaderSection logSheet={mockLogSheet} />
 
       <DailyDriverLogTab logData={logData} />
-      <ShippingSection />
-      <HourRecapSection/>
-    </Container>
+      <ShippingSection logSheet={mockLogSheet} />
+      <HourRecapSection logSheet={mockLogSheet} />
+    </>
   );
 };
 

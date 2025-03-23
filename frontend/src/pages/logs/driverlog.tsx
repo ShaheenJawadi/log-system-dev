@@ -16,7 +16,7 @@ import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 const DriverLog = () => {
   return (
     <Container>
-      <Stack marginTop={5} spacing={8}>
+      <Stack paddingY={5} spacing={8}>
         <Stack alignItems={"center"} direction={"row"} spacing={2}>
           <Button startIcon={<EditIcon />} variant="contained" color="warning">
             Edit

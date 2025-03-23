@@ -7,10 +7,13 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
+import { LogSheet } from "../../types/logs";
+import moment from "moment";
 
 const StyledBoxWithUnderLine = styled(Box)(({ theme }) => ({
   borderBottom: `2px solid #000`,
   padding: theme.spacing(1),
+  
   minHeight: 30,
   "&.smaller": {
     minHeight: 20,
@@ -24,6 +27,7 @@ const StyledBoxWithBorder = styled(Box)(({ theme }) => ({
   border: `2px solid #000`,
   padding: theme.spacing(1),
   minHeight: 40,
+  textAlign: "center",
 }));
 
 const StyledShippingBox = styled(Box)(({ theme }) => ({
@@ -33,6 +37,7 @@ const StyledShippingBox = styled(Box)(({ theme }) => ({
   position: "relative",
   paddingBottom: 25,
   marginBottom: 20,
+
 }));
 
 const StyledShippingSep = styled(Box)(({ theme }) => ({
@@ -40,18 +45,30 @@ const StyledShippingSep = styled(Box)(({ theme }) => ({
 
   width: 150,
 }));
+type Gprops={
+  logSheet:LogSheet
+}
 
-export const LogHeaderSection = () => {
+export const LogHeaderSection = ({logSheet}:Gprops) => {
   return (
     <Stack spacing={10}>
-      <FirstSec />
+      <FirstSec logSheet={logSheet}/>
       <Box>
-        <SecondSec />
+        <SecondSec logSheet={logSheet} />
       </Box>
     </Stack>
   );
 };
-const FirstSec = () => {
+
+const FirstSec = ({logSheet}:Gprops) => {
+  const date = moment(logSheet.date ||"2025-03-23");  
+
+  const dateObject = {
+    day: date.date(),  
+    month: date.month() + 1,  
+    year: date.year(),  
+  };
+
   return (
     <Stack spacing={3}>
       <Grid container spacing={5}>
@@ -72,7 +89,7 @@ const FirstSec = () => {
             alignContent={"center"}
           >
             <Stack flex={1} spacing={1}>
-              <StyledBoxWithUnderLine>{/* TT */}</StyledBoxWithUnderLine>
+              <StyledBoxWithUnderLine textAlign={"center"}>     {dateObject.month}</StyledBoxWithUnderLine>
               <Typography textAlign={"center"} variant="body2">
                 (month)
               </Typography>
@@ -83,7 +100,7 @@ const FirstSec = () => {
               </Typography>
             </Box>
             <Stack flex={1} spacing={1}>
-              <StyledBoxWithUnderLine>{/* TT */}</StyledBoxWithUnderLine>
+              <StyledBoxWithUnderLine textAlign={"center"}>     {dateObject.day}</StyledBoxWithUnderLine>
               <Typography textAlign={"center"} variant="body2">
                 (day)
               </Typography>
@@ -94,7 +111,7 @@ const FirstSec = () => {
               </Typography>
             </Box>
             <Stack flex={1} spacing={1}>
-              <StyledBoxWithUnderLine>{/* TT */}</StyledBoxWithUnderLine>
+              <StyledBoxWithUnderLine textAlign={"center"}>     {dateObject.year}</StyledBoxWithUnderLine>
               <Typography textAlign={"center"} variant="body2">
                 (year)
               </Typography>
@@ -120,7 +137,7 @@ const FirstSec = () => {
                 <Typography variant="body2" fontWeight={"bold"}>
                   From:
                 </Typography>
-                <Typography>{/* TT */}</Typography>
+                <Typography>{logSheet.fromLocation}</Typography>
               </Stack>
             </StyledBoxWithUnderLine>
           </Grid>
@@ -130,7 +147,7 @@ const FirstSec = () => {
                 <Typography variant="body2" fontWeight={"bold"}>
                   To:
                 </Typography>
-                <Typography>{/* TT */}</Typography>
+                <Typography>{logSheet.toLocation}</Typography>
               </Stack>
             </StyledBoxWithUnderLine>
           </Grid>
@@ -139,28 +156,29 @@ const FirstSec = () => {
     </Stack>
   );
 };
-const SecondSec = () => {
+const SecondSec = ({logSheet}:Gprops) => {
+ 
   return (
     <Grid marginX={20} container spacing={3}>
       <Grid size={6}>
         <Stack spacing={2}>
           <Stack direction={"row"} spacing={2}>
             <Box flex={1}>
-              <StyledBoxWithBorder></StyledBoxWithBorder>
+              <StyledBoxWithBorder>{logSheet.totalMilesToday}</StyledBoxWithBorder>
               <Typography variant="body1" textAlign={"center"}>
                 Total Miles Driving Today
               </Typography>
             </Box>
             <Box flex={1}>
-              <StyledBoxWithBorder></StyledBoxWithBorder>
+              <StyledBoxWithBorder>{logSheet.totalMileageToday}</StyledBoxWithBorder>
               <Typography variant="body1" textAlign={"center"}>
-                Total Miles Driving Today
+                Total Mileage Today
               </Typography>
             </Box>
           </Stack>
 
           <Box flex={1}>
-            <StyledBoxWithBorder></StyledBoxWithBorder>
+            <StyledBoxWithBorder>{logSheet.truckInfo}</StyledBoxWithBorder>
             <Typography variant="body1" textAlign={"center"}>
               Truck/Tractor and Trailer Numbers or <br />
               License Plate(s)/State (show each unit)
@@ -172,19 +190,19 @@ const SecondSec = () => {
       <Grid size={6}>
         <Stack spacing={0}>
           <Box flex={1}>
-            <StyledBoxWithUnderLine className="smaller"></StyledBoxWithUnderLine>
+            <StyledBoxWithUnderLine className="smaller">{logSheet.carrierName}</StyledBoxWithUnderLine>
             <Typography variant="body1" textAlign={"center"}>
               Name of Carrier or Carriers
             </Typography>
           </Box>
           <Box flex={1}>
-            <StyledBoxWithUnderLine className="smaller"></StyledBoxWithUnderLine>
+            <StyledBoxWithUnderLine className="smaller">{logSheet.officeAddress}</StyledBoxWithUnderLine>
             <Typography variant="body1" textAlign={"center"}>
               Main Office Address
             </Typography>
           </Box>
           <Box flex={1}>
-            <StyledBoxWithUnderLine className="smaller"></StyledBoxWithUnderLine>
+            <StyledBoxWithUnderLine className="smaller">{logSheet.terminalAddress}</StyledBoxWithUnderLine>
             <Typography variant="body1" textAlign={"center"}>
               Home Terminal Address
             </Typography>
@@ -195,7 +213,15 @@ const SecondSec = () => {
   );
 };
 
-export const ShippingSection = () => {
+export const ShippingSection = ({logSheet}:Gprops) => {
+  interface ShippingData {
+    manifestNumber: string;
+    shipperCommodity: string;
+  }
+  const mockShippingData: ShippingData = {
+    manifestNumber: "DVL-987654",
+    shipperCommodity: "Electronics - Laptops",
+  };
   return (
     <Box>
       <StyledShippingBox>
@@ -210,7 +236,7 @@ export const ShippingSection = () => {
               DVL or Manifest No. <br /> or
             </Typography>
 
-            <Typography variant="body2">{/* TT */}</Typography>
+            <Typography variant="body2">{logSheet.manifestNumber}</Typography>
           </Stack>
           <StyledShippingSep />
           <Stack spacing={5} direction={"row"}>
@@ -218,7 +244,7 @@ export const ShippingSection = () => {
               {" Shipper & Commodity"}
             </Typography>
 
-            <Typography variant="body2">{/* TT */}</Typography>
+            <Typography variant="body2">{logSheet.shipperCommodity}</Typography>
           </Stack>
 
           <Typography
@@ -255,7 +281,10 @@ export const ShippingSection = () => {
   );
 };
 
-export const HourRecapSection = () => {
+export const HourRecapSection = ({logSheet}:Gprops) => {
+ 
+ 
+
   return (
     <Box>
       <Grid container spacing={2}>
@@ -265,7 +294,7 @@ export const HourRecapSection = () => {
           </Typography>
         </Grid>
         <Grid size={1.09}>
-          <StyledBoxWithUnderLine className="spec"></StyledBoxWithUnderLine>
+          <StyledBoxWithUnderLine className="spec"  flex={1} fontSize={18} textAlign={"center"}>{logSheet.OnDutyHoursToday}</StyledBoxWithUnderLine>
           <Typography variant="body2" fontWeight={"bold"}>
             On duty hours today, Total lines 3 & 4
           </Typography>
@@ -281,7 +310,7 @@ export const HourRecapSection = () => {
               <Typography variant="body2" fontWeight={"bold"}>
                 A.
               </Typography>
-              <Typography>{/* TT */}</Typography>
+              <Typography  flex={1} fontSize={18} textAlign={"center"}>{logSheet.totalOnDutyLast7Days}</Typography>
             </Stack>
           </StyledBoxWithUnderLine>
           <Typography variant="body2" fontWeight={"bold"}>
@@ -295,7 +324,7 @@ export const HourRecapSection = () => {
               <Typography variant="body2" fontWeight={"bold"}>
                 B.
               </Typography>
-              <Typography>{/* TT */}</Typography>
+              <Typography  flex={1} fontSize={18} textAlign={"center"}>{logSheet.totalAvailableTomorrow70}</Typography>
             </Stack>
           </StyledBoxWithUnderLine>
           <Typography variant="body2" fontWeight={"bold"}>
@@ -309,7 +338,7 @@ export const HourRecapSection = () => {
               <Typography variant="body2" fontWeight={"bold"}>
                 C.
               </Typography>
-              <Typography>{/* TT */}</Typography>
+              <Typography  flex={1} fontSize={18} textAlign={"center"}>{logSheet.totalOnDutyLast5Days}</Typography>
             </Stack>
           </StyledBoxWithUnderLine>
           <Typography variant="body2" fontWeight={"bold"}>
@@ -328,7 +357,7 @@ export const HourRecapSection = () => {
               <Typography variant="body2" fontWeight={"bold"}>
                 A.
               </Typography>
-              <Typography>{/* TT */}</Typography>
+              <Typography  flex={1} fontSize={18} textAlign={"center"}>{logSheet.totalOnDutyLast8Days}</Typography>
             </Stack>
           </StyledBoxWithUnderLine>
           <Typography variant="body2" fontWeight={"bold"}>
@@ -342,7 +371,7 @@ export const HourRecapSection = () => {
               <Typography variant="body2" fontWeight={"bold"}>
                 B.
               </Typography>
-              <Typography>{/* TT */}</Typography>
+              <Typography  flex={1} fontSize={18} textAlign={"center"}>{logSheet.totalAvailableTomorrow60}</Typography>
             </Stack>
           </StyledBoxWithUnderLine>
           <Typography variant="body2" fontWeight={"bold"}>
@@ -356,7 +385,7 @@ export const HourRecapSection = () => {
               <Typography variant="body2" fontWeight={"bold"}>
                 C.
               </Typography>
-              <Typography>{/* TT */}</Typography>
+              <Typography flex={1} fontSize={18} textAlign={"center"}>{logSheet.totalOnDutyLast7Days60}</Typography>
             </Stack>
           </StyledBoxWithUnderLine>
           <Typography variant="body2" fontWeight={"bold"}>

@@ -11,7 +11,7 @@ const MainPageContainer = ({ children , title }: { children: ReactNode , title:s
       <Box sx={{ flex: 1 }}>
         <PerfectScrollbar>
           <Box 
-            sx={{ height:"100%" }}
+            sx={{ height:`calc(100vh - ${headerHeight}px)` }}
           >
             {children}
           </Box>

@@ -17,8 +17,8 @@ export type LogDay = {
 };
 
 
-type LogSheet = {
-  log_days: LogDay[];  
+export type LogSheet = {
+  log_days?: LogDay[];  
 
   totalMilesToday?: number | null;
   totalMileageToday?: number | null;
