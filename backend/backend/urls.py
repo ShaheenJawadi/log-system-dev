@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/trip', include('trips.urls')),
     path('api/auth', include('user.urls')),
+
+    path('api/logs', include('driver_logs.urls')),
 ]

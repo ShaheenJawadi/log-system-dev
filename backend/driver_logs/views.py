@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from driver_logs.serializers import LogDaySerializer
+from rest_framework.response import Response
+
+from driver_logs.models import LogDay
+
+
+class LogsView(viewsets.ModelViewSet):
+    queryset = LogDay.objects.all()
+    serializer_class = LogDaySerializer

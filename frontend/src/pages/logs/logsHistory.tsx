@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   Container,
   Divider,
   Stack,
@@ -11,9 +12,9 @@ import {
 import Grid from "@mui/material/Grid2";
 import RouteIcon from "@mui/icons-material/Route";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import ShowChartIcon from '@mui/icons-material/ShowChart';
-import MapIcon from '@mui/icons-material/Map';
-import DeleteIcon from '@mui/icons-material/Delete'; 
+import ShowChartIcon from "@mui/icons-material/ShowChart";
+import MapIcon from "@mui/icons-material/Map";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useDialog } from "../../context/dialogContext";
 import { appPaths } from "../../routes/paths";
 import { useNavigate } from "react-router-dom";
@@ -21,53 +22,54 @@ const LogsHistory = () => {
   const { openDialog } = useDialog();
   const navigate = useNavigate();
   return (
-    <Container> 
+    <Container>
       <Grid container spacing={2} marginY={5}>
         <Grid size={4}>
           <Card>
             <CardContent>
               <Stack spacing={5}>
                 <Box>
-                  <Typography textAlign={"center"} fontWeight={600} variant="h5" color="primary">
+                  <Typography
+                    textAlign={"center"}
+                    fontWeight={600}
+                    variant="h5"
+                    color="primary"
+                  >
                     04/12/1998
                   </Typography>
                 </Box>
-                <Divider/>
-                <Stack spacing={3} >
+                <Divider />
+                <Stack spacing={3}>
                   <Stack flex={1}>
                     <Typography variant="h6" color="secondary">
-                      From:  
+                      From:
                     </Typography>
-                    <Typography variant="body1"> {/* TT */} 
-                    </Typography>
+                    <Typography variant="body1"> {/* TT */}</Typography>
                   </Stack>
                   <Stack flex={1} direction={"row"}>
                     <Typography variant="h6" color="secondary">
-                      To:  
+                      To:
                     </Typography>
-                    <Typography variant="body1"> {/* TT */} 
-                    </Typography>
+                    <Typography variant="body1"> {/* TT */}</Typography>
                   </Stack>
                 </Stack>
-           
+
                 <Stack spacing={3} justifyContent={"center"} direction={"row"}>
-                  <Stack spacing={1} direction={"row"}> 
-                    <DateRangeIcon color="primary" />
-                    <Typography
-                      textAlign={"center"}
-                      variant="body2" 
-                      fontWeight={600}
-                    >
-                      Total Days:
-                    </Typography>
-                    <Typography>500</Typography>
+                  <Stack spacing={1} direction={"row"}>
+                    <Chip
+                      sx={{ cursor: "pointer" }}
+                      label="Overview on map"
+                      icon={<MapIcon />}
+                      color="warning"
+                    />
+                    {/* <Chip label="No associated  trip" icon={<MapIcon/>} color="default" /> */}
                   </Stack>
-                 
-                  <Stack spacing={1} direction={"row"}> 
+
+                  <Stack spacing={1} direction={"row"}>
                     <RouteIcon color="primary" />
                     <Typography
                       textAlign={"center"}
-                      variant="body2" 
+                      variant="body2"
                       fontWeight={600}
                     >
                       Total Miles:
@@ -76,16 +78,27 @@ const LogsHistory = () => {
                   </Stack>
                   <Stack direction={"row"}></Stack>
                 </Stack>
-                <Divider/>
+                <Divider />
 
                 <Stack spacing={3} justifyContent={"end"} direction={"row"}>
-                  <Button onClick={()=>openDialog("deleteLog" , {id:3})} startIcon={<DeleteIcon/>} variant="contained" color="error">
+                  <Button
+                    onClick={() => openDialog("deleteLog", { id: 3 })}
+                    startIcon={<DeleteIcon />}
+                    variant="contained"
+                    color="error"
+                  >
                     Delete
                   </Button>
-                  <Button onClick={()=> navigate(appPaths.singleLog.replace(":id", "5"))} startIcon={<ShowChartIcon/>} variant="contained" color="primary">
+                  <Button
+                    onClick={() =>
+                      navigate(appPaths.singleLog.replace(":id", "5"))
+                    }
+                    startIcon={<ShowChartIcon />}
+                    variant="contained"
+                    color="primary"
+                  >
                     Open log
                   </Button>
-                 
                 </Stack>
               </Stack>
             </CardContent>
@@ -97,4 +110,3 @@ const LogsHistory = () => {
 };
 
 export default LogsHistory;
- 
