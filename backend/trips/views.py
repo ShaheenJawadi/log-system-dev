@@ -51,28 +51,33 @@ class TripViewSet(viewsets.ModelViewSet):
         route_service = RouteService(trip)
         planned_trip = route_service.plan_route()
 
-        log_sheet = LogSheet.objects.create(
-            trip=trip,
-            user=user,
-            date=trip.trip_date,
-            totalMileageToday=0,  # later
-            totalMilesToday=0,  # later
-            OnDutyHoursToday=0,  # later
-            fromLocation=pickup_location.address,
-            toLocation=dropoff_location.address
-
-        );
 
         # complete  data trip
-        response_data = self.get_serialized_trip_data(planned_trip, log_sheet.id)
+        response_data = self.get_serialized_trip_data(planned_trip)
+
+        log_days = LogDay.objects.filter(trip=trip).order_by('date')
+
+        for log_day in log_days:
+            log_sheet = LogSheet.objects.create(
+                trip=trip,
+                user=user,
+                date=log_day.date,
+                totalMileageToday=0,
+                totalMilesToday=0,
+                OnDutyHoursToday=0,
+                fromLocation=pickup_location.address,
+                toLocation=dropoff_location.address
+            )
+
+            log_day.log_sheet = log_sheet
+            log_day.save()
+
         return Response(response_data)
 
-    def get_serialized_trip_data(self, trip, log_sheet_id=None):
+    def get_serialized_trip_data(self, trip):
         log_days = LogDay.objects.filter(trip=trip).order_by('date')
         stops = RouteStop.objects.filter(trip=trip).order_by('arrival_time')
 
-        if log_sheet_id is not None:
-            log_days.update(log_sheet_id=log_sheet_id)
         # Serialize
         trip_data = TripSerializer(trip).data
         log_days_data = LogDaySerializer(log_days, many=True).data
