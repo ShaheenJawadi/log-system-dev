@@ -13,7 +13,8 @@ export type LogDay = {
   id: number;
   trip: number;
   date: string;
-  entries: LogEntry[];
+  entries?: LogEntry[];
+  log_sheet?:LogSheet;
 };
 
 

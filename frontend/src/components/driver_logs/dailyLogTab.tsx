@@ -6,7 +6,11 @@ import { Box } from "@mui/material";
 const DailyDriverLogTab = ({logData}:{logData: LogEntry[]}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
- 
+  logData= logData.map((entry) => ({
+    ...entry,
+    start: entry.start / 60,
+    end: entry.end / 60,
+  }));
  
   useEffect(() => {
     const canvas = canvasRef.current;

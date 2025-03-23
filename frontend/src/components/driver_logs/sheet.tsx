@@ -1,4 +1,3 @@
-import { Box, Container, Stack } from "@mui/material";
 import DailyDriverLogTab from "../../components/driver_logs/dailyLogTab";
 import {
   HourRecapSection,
@@ -6,8 +5,34 @@ import {
   ShippingSection,
 } from "../../components/driver_logs/dailyRecord";
 import { LogEntry, LogSheet } from "../../types/logs";
-
+import * as logService from "../../services/logServices";
+import { useEffect, useState } from "react";
+import { LogDay } from "../../types/logs";
+import { useParams } from "react-router-dom";
 const DriverSheet = () => {
+  const { id } = useParams<{ id: string }>();
+  const [logsData, setLogsData] = useState<LogDay>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [error, setError] = useState<boolean>(false);
+
+  const fetchSingleLog = async (id: number) => {
+    try {
+      const response = await logService.singleLog(id);
+
+      setLogsData(response);
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) fetchSingleLog(parseInt(id));
+  }, [id]);
+
+
   const logData: LogEntry[] = [
     { type: "off", start: 0, end: 2.75, remark: "Resting in Little Rock, AR" },
     { type: "sb", start: 2.75, end: 5, remark: "Sleep break before driving" },
@@ -44,16 +69,14 @@ const DriverSheet = () => {
       remark: "Done for the day, off-duty",
     },
   ];
-
-  const mockLogSheet: LogSheet = {};
+ 
 
   return (
     <>
-      <LogHeaderSection logSheet={mockLogSheet} />
-
-      <DailyDriverLogTab logData={logData} />
-      <ShippingSection logSheet={mockLogSheet} />
-      <HourRecapSection logSheet={mockLogSheet} />
+      <LogHeaderSection logSheet={logsData?.log_sheet || {}} />
+      <DailyDriverLogTab logData={logsData?.entries||[]} />
+      <ShippingSection logSheet={logsData?.log_sheet || {}} />
+      <HourRecapSection logSheet={logsData?.log_sheet || {}} />
     </>
   );
 };
