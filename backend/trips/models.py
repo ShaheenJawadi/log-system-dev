@@ -20,6 +20,12 @@ class Trip(models.Model):
     polyline = models.TextField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trip')
 
+    def delete(self, *args, **kwargs):
+        self.current_location.delete()
+        self.pickup_location.delete()
+        self.dropoff_location.delete()
+        super().delete(*args, **kwargs)
+
 
 class RouteStop(models.Model):
     STOP_TYPES = (
