@@ -82,10 +82,7 @@ class TripViewSet(viewsets.ModelViewSet):
         log_days_data = LogDaySerializer(log_days, many=True).data
         stops_data = RouteStopSerializer(stops, many=True).data
 
-        for log_day_data in log_days_data:
-            log_day = next(ld for ld in log_days if ld.id == log_day_data['id'])
-            entries = LogEntry.objects.filter(log_day=log_day).order_by('start')
-            log_day_data['entries'] = LogEntrySerializer(entries, many=True).data
+
 
         response_data = {
             'trip': trip_data,
