@@ -10,6 +10,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import UntypedToken
 
+from user.models import Settings
+
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -37,6 +39,7 @@ class RegisterView(APIView):
 
         user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
                                         last_name=last_name)
+        Settings.objects.create(user=user);
         return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
 
 
