@@ -1,10 +1,12 @@
 export type LogEntry = {
-  type: 'off' | 'sb' | 'driving' | 'on';
+  type: LogEntryType;
   start: number;
   end: number;
   remark?: string;
 }
 
+
+export type LogEntryType = "off" | "sb" | "driving" | "on";
 
  
 export type LogDay = {
