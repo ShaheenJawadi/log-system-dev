@@ -8,7 +8,7 @@ from driver_logs.serializers import LogEntrySerializer, LogDaySerializer
 from .models import Trip, Location, RouteStop
 from .serializers import (TripSerializer, RouteStopSerializer, TripListSerializer)
 from .services import RouteService
-
+from rest_framework.exceptions import PermissionDenied
 
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
@@ -94,15 +94,21 @@ class TripViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         trip = self.get_object()
+        if trip.user != request.user:
+            raise PermissionDenied(
+                "You do not have permission to delete this trip.")
         trip.delete()
         return Response({"message": "Trip deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
     def retrieve(self, request, *args, **kwargs):
         trip = self.get_object()
+        if trip.user != request.user:
+            raise PermissionDenied("You do not have permission to view this trip.")
         response_data = self.get_serialized_trip_data(trip)
         return Response(response_data)
 
     def list(self, request, *args, **kwargs):
-        trips = self.get_queryset()
+        user = request.user
+        trips = self.get_queryset().filter(user=user)
         response_data = TripListSerializer(trips, many=True).data
         return Response(response_data)

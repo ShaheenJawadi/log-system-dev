@@ -6,7 +6,7 @@ from driver_logs import views
 router = DefaultRouter()
 
 
-router.register(r'', views.LogsView)
+router.register(r'', views.LogsView, basename='logs')
 
 urlpatterns = [
     path('/', include(router.urls)),
