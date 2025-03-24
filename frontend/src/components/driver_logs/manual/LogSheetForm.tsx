@@ -757,9 +757,7 @@ const LogSheetFormPage: React.FC<LogSheetFormPageProps> = ({
   return (
     <LogSheetForm
       entryData={initialData?.entries || []}
-      initialData={
-        isUpdate && initialData?.log_sheet ? initialData.log_sheet : {}
-      }
+      initialData={initialData?.log_sheet ? initialData.log_sheet : {}}
       onSubmit={handleSubmit}
       isUpdate={isUpdate}
     />

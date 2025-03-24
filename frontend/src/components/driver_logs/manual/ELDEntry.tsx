@@ -56,8 +56,7 @@ type ELDEntryFormProps={
  setLogData: (entry: LogEntry[]) => void;
 }
 const ELDEntryForm: React.FC<ELDEntryFormProps> = ({initialEntry ,setEntryError , setLogData}) => {
-  
-  console.log(initialEntry);
+   
   const [logEntries, setLogEntries] = useState<LogEntry[]>(initialEntry); 
   const [error, setError] = useState<string>("");
   const [totalHours, setTotalHours] = useState<number>(0);
