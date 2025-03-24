@@ -15,6 +15,7 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import SaveIcon from "@mui/icons-material/Save";
+import { SettingsType } from "../types/user";
 const SettingsForm = (closeDialog: { closeDialog: () => void }) => {
   const formik = useFormik<SettingsType>({
     initialValues: {

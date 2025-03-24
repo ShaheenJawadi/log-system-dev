@@ -1,4 +1,4 @@
-type SettingsType= {
+export type SettingsType= {
     truckInfo: string;
     carrierName: string;
     officeAddress: string;
