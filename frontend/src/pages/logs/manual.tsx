@@ -1,13 +1,24 @@
-import { Box, Container } from "@mui/material";
-import ELDEntryForm from "../../components/driver_logs/manual/ELDEntry";
+import { Box, Container, Stack, Typography } from "@mui/material";
+import LogSheetFormPage from "../../components/driver_logs/manual/LogSheetForm";
+import { LogSheet } from "../../types/logs";
 
 const ManualLogEntry = () => {
+  const isUpdate = false;
+  
   return (
     <Container>
-      <Box marginY={5} borderColor={"primary.main"} border={1} sx={{background:"#fff"}} padding={2} >
-           <ELDEntryForm />
-      </Box>
-   
+      <Stack spacing={2} paddingY={5}>
+        <Typography
+          textAlign={"center"}
+          variant="h4"
+          fontWeight={600}
+          color="primary"
+        >
+          {isUpdate ? "Update Driver's Log Sheet" : "Create Driver's Log Sheet"}
+        </Typography>
+
+        <LogSheetFormPage   initialData={null} />
+      </Stack>
     </Container>
   );
 };

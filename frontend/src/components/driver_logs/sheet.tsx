@@ -3,10 +3,7 @@ import {
   HourRecapSection,
   LogHeaderSection,
   ShippingSection,
-} from "../../components/driver_logs/dailyRecord";
-import { LogEntry, LogSheet } from "../../types/logs";
-import * as logService from "../../services/logServices";
-import { useEffect, useState } from "react";
+} from "../../components/driver_logs/dailyRecord"; 
 import { LogDay } from "../../types/logs";
 import { useParams } from "react-router-dom";
 const DriverSheet = ({logsData}:{logsData:LogDay|null}) => {

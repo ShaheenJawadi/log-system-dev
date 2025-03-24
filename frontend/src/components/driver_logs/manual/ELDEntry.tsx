@@ -49,17 +49,18 @@ const roundToQuarterHour = (minutes: number): number => {
   return Math.round(minutes / 15) * 15;
 };
 
-const ELDEntryForm: React.FC = () => {
-  const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
-  const [currentDate, setCurrentDate] = useState<string>("");
+
+type ELDEntryFormProps={
+ initialEntry:LogEntry[];
+ setEntryError: (isErr: boolean) => void;
+ setLogData: (entry: LogEntry[]) => void;
+}
+const ELDEntryForm: React.FC<ELDEntryFormProps> = ({initialEntry ,setEntryError , setLogData}) => {
+  const [logEntries, setLogEntries] = useState<LogEntry[]>(initialEntry); 
   const [error, setError] = useState<string>("");
   const [totalHours, setTotalHours] = useState<number>(0);
 
-  useEffect(() => {
-    const now = new Date();
-    const formattedDate = now.toDateString();
-    setCurrentDate(formattedDate);
-  }, []);
+  
 
   useEffect(() => {
     let total = 0;
@@ -74,9 +75,13 @@ const ELDEntryForm: React.FC = () => {
           total
         )} (${total} minutes). Must equal 24:00 (1440 minutes).`
       );
+      setEntryError(true);
     } else {
       setError("");
+        setEntryError(false);
     }
+
+    setLogData(logEntries);
   }, [logEntries]);
 
   const handleAddEntry = (): void => {
@@ -178,45 +183,19 @@ const ELDEntryForm: React.FC = () => {
 
   const timeOptions = generateTimeOptions();
 
-  const handleGenerateJson = ()  => {
-    if (totalHours === 1440) {
- 
-      alert("Done");
-    
-    } else {
-      setError("Total time must equal 24 hours.");
-      return null;
-    }
-  };
-
+  
   useEffect(() => {
     if (logEntries.length === 0) {
       setLogEntries([{ ...initialLog, end: 1440 }]); // def 24 h
     }
   }, []);
-
-  const inputBoxing = { m: 1, width: "25ch" };
+ 
 
   return (
     <Box>
-      <Box sx={{ mb: 3, display: "flex", alignItems: "center" }}>
-        <FormControl variant="outlined" sx={{ ...inputBoxing }}>
-          <InputLabel>Log date</InputLabel>
-          <OutlinedInput
-            type="date"
-            value={currentDate}
-            onChange={(e) => setCurrentDate(e.target.value)}
-            label="Current date"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccessTimeFilledIcon color="warning" />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-      </Box>
+    
 
-      <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
+ 
         <Box
           sx={{
             display: "flex",
@@ -225,16 +204,15 @@ const ELDEntryForm: React.FC = () => {
             mb: 2,
           }}
         >
-          <Typography variant="h6">
-            Log Entries
-            <Typography
-              component="span"
+         
+            <Typography 
               color={totalHours === 1440 ? "success.main" : "error.main"}
               sx={{ ml: 2 }}
+              variant="h6"
             >
               Total: {minutesToHHMM(totalHours)} / 24:00
             </Typography>
-          </Typography>
+       
           <Button
             variant="contained"
             color="primary"
@@ -350,18 +328,8 @@ const ELDEntryForm: React.FC = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Paper>
-
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleGenerateJson}
-          disabled={totalHours !== 1440}
-        >
-          Check
-        </Button>
-      </Box>
+      
+ 
     </Box>
   );
 };

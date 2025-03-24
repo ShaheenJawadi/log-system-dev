@@ -4,6 +4,7 @@ import {
   ButtonGroup,
   Container,
   Divider,
+  Paper,
   Stack,
   Typography,
 } from "@mui/material";
@@ -78,9 +79,9 @@ const DriverLog = () => {
         </Box>
         }
         
-        <Box borderColor={"primary.main"} border={1} sx={{background:"#fff"}} padding={2}>
+        <Paper  elevation={2}  sx={{ padding: 3 }}>
           <DriverSheet logsData={logsData||null} />
-        </Box>
+        </Paper>
       </Stack>
     </Container>
   );
