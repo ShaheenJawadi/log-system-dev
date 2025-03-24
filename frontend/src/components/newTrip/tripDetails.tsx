@@ -336,7 +336,8 @@ const DisplayTripDetails: React.FC = () => {
           </Typography>
         </Stack>
         <Button
-           onClick={() => tripData?.id && navigete(appPaths.singleLog.replace(":id", tripData.id.toString()))}
+        disabled={!tripData?.first_log_day}
+           onClick={() => tripData?.id && navigete(appPaths.singleLog.replace(":id", tripData?.first_log_day?.toString()||""))}
           size="large"
           variant="contained"
           startIcon={<ViewTimelineIcon />}

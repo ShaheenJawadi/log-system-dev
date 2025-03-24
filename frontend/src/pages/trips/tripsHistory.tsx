@@ -46,7 +46,7 @@ const TripsHistory = () => {
   useEffect(() => {
     fetchList();
   }, []);
-  const action=(target:string,id:number )=>{
+  const action=(target:string,id:number  , logId:number|null=null )=>{
 
     if(target==="map"){
       navigate(appPaths.singleTrip.replace(":id", id.toString()));
@@ -54,8 +54,8 @@ const TripsHistory = () => {
     if(target==="del"){
       openDialog("deleteTrip", { id: id });
     }
-    if(target==="log"){
-      navigate(appPaths.singleLog.replace(":id", id.toString()));
+    if(target==="log" && logId){
+      navigate(appPaths.singleLog.replace(":id", logId.toString()));
     }
   }
  
@@ -64,7 +64,7 @@ const TripsHistory = () => {
     <Container>
       <Grid container spacing={2} marginY={5}>
         {tripData.map((trip) => (
-          <SingleGrid action={(target)=>action(target, trip.id)} trip={trip} />
+          <SingleGrid action={(target)=>action(target, trip.id , trip.first_log_day)} trip={trip} />
         ))}
       </Grid>
     </Container>
@@ -173,6 +173,7 @@ const SingleGrid = ({ trip, action }: { trip: Trip; action: (target:string) => v
               Delete
             </Button>
             <Button
+            disabled={!trip.first_log_day}
              onClick={() => action("log")}
               startIcon={<ShowChartIcon />}
               variant="contained"

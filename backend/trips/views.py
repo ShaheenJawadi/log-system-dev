@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 
 from driver_logs.models import LogEntry, LogDay, LogSheet
 from driver_logs.serializers import LogEntrySerializer, LogDaySerializer
+from user.models import Settings
 from .models import Trip, Location, RouteStop
 from .serializers import (TripSerializer, RouteStopSerializer, TripListSerializer)
 from .services import RouteService
@@ -57,6 +58,8 @@ class TripViewSet(viewsets.ModelViewSet):
 
         log_days = LogDay.objects.filter(trip=trip).order_by('date')
 
+        user_settings = Settings.objects.filter(user=user).first() or Settings()
+
         for log_day in log_days:
             log_sheet = LogSheet.objects.create(
                 user=user,
@@ -65,7 +68,14 @@ class TripViewSet(viewsets.ModelViewSet):
                 totalMilesToday=0,
                 OnDutyHoursToday=0,
                 fromLocation=pickup_location.address,
-                toLocation=dropoff_location.address
+                toLocation=dropoff_location.address,
+
+                truckInfo=user_settings.truckInfo,
+                carrierName=user_settings.carrierName,
+                officeAddress=user_settings.officeAddress,
+                terminalAddress=user_settings.terminalAddress,
+                manifestNumber=user_settings.manifestNumber,
+                shipperCommodity=user_settings.shipperCommodity,
             )
 
             log_day.log_sheet = log_sheet
