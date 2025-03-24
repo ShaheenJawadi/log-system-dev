@@ -92,7 +92,7 @@ const LogSheetForm: React.FC<LogSheetFormProps> = ({
           entries: logData,
           id: 0,
           trip: 0,
-          date: "",
+          date: values.date,
         });
       } catch (error) {
         console.error("Form submission failed", error);
@@ -685,7 +685,7 @@ const LogSheetFormPage: React.FC<LogSheetFormPageProps> = ({
       if (isUpdate) {
         const res = await logService.updateLog({
           ...values,
-          id: initialData?.id || 0,
+          id: initialData?.id || 0, 
         });
         navigate(appPaths.singleLog.replace(":id", res.id.toString()));
       } else {

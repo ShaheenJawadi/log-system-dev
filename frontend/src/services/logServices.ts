@@ -15,7 +15,7 @@ export const singleLog = async (id: number) => {
  
  
 export const updateLog = async (data: LogDay) => {
-  const response = await apiService.put<LogDay>(`/logs/` , data);
+  const response = await apiService.put<LogDay>(`/logs/${data.id}/` , data);
   return response;
 };
 

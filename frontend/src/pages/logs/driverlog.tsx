@@ -18,7 +18,8 @@ import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import * as logService from "../../services/logServices";
 import { useEffect, useState } from "react";
 import { LogDay } from "../../types/logs";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { appPaths } from "../../routes/paths";
 
 const DriverLog = () => {
 
@@ -34,6 +35,7 @@ const DriverLog = () => {
 
       setLogsData(response);
     } catch (error) {
+      navigate(appPaths.logsHistory);
       setError(true);
     } finally {
       setLoading(false);
@@ -43,12 +45,12 @@ const DriverLog = () => {
   useEffect(() => {
     if (id) fetchSingleLog(parseInt(id));
   }, [id]);
- 
+ const navigate = useNavigate();
   return (
     <Container>
       <Stack paddingY={5} spacing={8}>
         <Stack alignItems={"center"} direction={"row"} spacing={2}>
-          <Button disabled={!!logsData?.trip} startIcon={<EditIcon />} variant="contained" color="warning">
+          <Button onClick={()=>navigate(appPaths.updateLog.replace(":id", logsData?.id.toString()|| ""))} disabled={!!logsData?.trip} startIcon={<EditIcon />} variant="contained" color="warning">
             Edit
           </Button>
           <Divider sx={{ flex: 1 }} />
