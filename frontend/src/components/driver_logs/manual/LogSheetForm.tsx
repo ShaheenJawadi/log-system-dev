@@ -17,11 +17,15 @@ import {
   IconButton,
   Paper,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
 import { LogDay, LogEntry, LogSheet } from "../../../types/logs";
 import ELDEntryForm from "./ELDEntry";
 import * as logService from "../../../services/logServices";
 import { useNavigate } from "react-router-dom";
 import { appPaths } from "../../../routes/paths";
+import DriverSheet from "../sheet";
 const logSheetValidationSchema = Yup.object({
   totalMilesToday: Yup.number().nullable().typeError("Must be a number"),
   totalMileageToday: Yup.number().nullable().typeError("Must be a number"),
@@ -62,6 +66,7 @@ const LogSheetForm: React.FC<LogSheetFormProps> = ({
 }) => {
   const [logData, setLogData] = useState<LogEntry[]>(entryData);
   const [entryError, setEntryError] = useState<boolean>(false);
+  const [isPreview, setPreview] = useState<boolean>(false);
 
   const formik = useFormik({
     initialValues: {
@@ -102,39 +107,90 @@ const LogSheetForm: React.FC<LogSheetFormProps> = ({
     },
   });
 
+  const conData = (): LogDay => {
+    console.log("formik.values sqkljdhqjks hdjksq hdjksq hdjk sq");
+    console.log(logData);
+    console.log("formik.values sqkljdhqjks hdjksq hdjksq hdjk sq");
+    return {
+      log_sheet: formik.values,
+      entries: logData,
+      id: 0,
+      trip: 0,
+      date: formik.values.date,
+    };
+  };
   return (
     <Stack spacing={4} component="form" onSubmit={formik.handleSubmit}>
-      <Paper elevation={2} sx={{ padding: 3 }}>
-        <Stack spacing={5}>
-          <FirstSecForm formik={formik} />
-          <SecondSecForm formik={formik} />
-          <Box>
-            <SectionTitle title="Log Entries" />
-            <ELDEntryForm
-              initialEntry={entryData}
-              setEntryError={(isErr) => setEntryError(isErr)}
-              setLogData={(entry) => setLogData(entry)}
-            />
-          </Box>
+      <Grid justifyContent={"center"} container spacing={2}>
+        <Grid size={{ xl: 6, md: 12 }}>
+          <Paper elevation={2} sx={{ padding: 3 }}>
+            <Stack spacing={5}>
+              <FirstSecForm formik={formik} />
+              <SecondSecForm formik={formik} />
+              <Box>
+                <SectionTitle title="Log Entries" />
+                <ELDEntryForm
+                  initialEntry={logData}
+                  setEntryError={(isErr) => setEntryError(isErr)}
+                  setLogData={(entry) => setLogData(entry)}
+                />
+              </Box>
 
-          <ShippingSectionForm formik={formik} />
+              <ShippingSectionForm formik={formik} />
 
-          <HourRecapSectionForm formik={formik} />
-        </Stack>
-      </Paper>
-      <Button
-        type="submit"
-        variant="contained"
-        disabled={formik.isSubmitting || entryError}
-      >
-        {formik.isSubmitting
-          ? isUpdate
-            ? "Updating..."
-            : "Creating..."
-          : isUpdate
-          ? "Update Log Sheet"
-          : "Create Log Sheet"}
-      </Button>
+              <HourRecapSectionForm formik={formik} />
+            </Stack>
+          </Paper>
+        </Grid>
+        {
+          isPreview && (<Grid size={{ xl: 6, md: 12 }}>
+            <Paper elevation={2} sx={{ padding: 3 }}>
+              <DriverSheet logsData={conData()} />
+            </Paper>
+          </Grid>)
+        }
+        
+      </Grid>
+
+      <Stack direction={"row"} spacing={2} justifyContent={"center"}>
+        {!isPreview ? (
+          <Button
+            size="large"
+            color="warning"
+            variant="contained"
+            disabled={formik.isSubmitting || entryError}
+            startIcon={<VisibilityIcon />}
+            onClick={() => setPreview(true)}
+          >
+            Preview Log sheet
+          </Button>
+        ) : (
+          <Button
+            size="large"
+            color="secondary"
+            variant="contained"
+            disabled={formik.isSubmitting || entryError}
+            startIcon={<EditIcon />}
+            onClick={() => setPreview(false)}
+          >
+            Hide preview
+          </Button>
+        )}
+        <Button
+          size="large"
+          type="submit"
+          variant="contained"
+          disabled={formik.isSubmitting || entryError}
+        >
+          {formik.isSubmitting
+            ? isUpdate
+              ? "Updating..."
+              : "Creating..."
+            : isUpdate
+            ? "Update Log Sheet"
+            : "Create Log Sheet"}
+        </Button>
+      </Stack>
     </Stack>
   );
 };
@@ -680,12 +736,11 @@ const LogSheetFormPage: React.FC<LogSheetFormPageProps> = ({
 }) => {
   const navigate = useNavigate();
   const handleSubmit = async (values: LogDay) => {
-    
     try {
       if (isUpdate) {
         const res = await logService.updateLog({
           ...values,
-          id: initialData?.id || 0, 
+          id: initialData?.id || 0,
         });
         navigate(appPaths.singleLog.replace(":id", res.id.toString()));
       } else {

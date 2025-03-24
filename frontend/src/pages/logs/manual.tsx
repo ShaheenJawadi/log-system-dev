@@ -1,4 +1,4 @@
-import { Box, Container, Stack, Typography } from "@mui/material";
+import { Box, Container, Grid2 as Grid, Stack, Typography } from "@mui/material";
 import LogSheetFormPage from "../../components/driver_logs/manual/LogSheetForm";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -42,7 +42,7 @@ const ManualLogEntry = ({ isUpdate }: { isUpdate: boolean }) => {
     }
   } else {
     return (
-      <Container>
+      <Container  maxWidth={false}   >
         <Stack spacing={2} paddingY={5}>
           <Typography
             textAlign={"center"}
