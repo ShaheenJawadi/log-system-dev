@@ -27,7 +27,7 @@ class LogSheet(models.Model):
 
 
 class LogDay(models.Model):
-    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='log_days')
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='log_days',null=True, blank=True)
     date = models.DateField()
     log_sheet = models.OneToOneField(LogSheet, on_delete=models.CASCADE, related_name='log_day', null=True, blank=True)
 
