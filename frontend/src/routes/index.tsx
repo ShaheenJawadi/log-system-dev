@@ -95,7 +95,19 @@ export const routes: RouteObject[] = [
       <PrivateRoute
         element={
           <MainPageContainer title="Manual Log Entry">
-           <ELDEntryForm />
+           <ELDEntryForm isUpdate={false} />
+          </MainPageContainer>
+        }
+      />
+    ),
+  },
+  {
+    path: appPaths.updateLog,
+    element: (
+      <PrivateRoute
+        element={
+          <MainPageContainer title="Manual Log Entry">
+           <ELDEntryForm isUpdate={true} />
           </MainPageContainer>
         }
       />

@@ -19,7 +19,9 @@ import {
 } from "@mui/material";
 import { LogDay, LogEntry, LogSheet } from "../../../types/logs";
 import ELDEntryForm from "./ELDEntry";
-
+import * as logService from "../../../services/logServices";
+import { useNavigate } from "react-router-dom";
+import { appPaths } from "../../../routes/paths";
 const logSheetValidationSchema = Yup.object({
   totalMilesToday: Yup.number().nullable().typeError("Must be a number"),
   totalMileageToday: Yup.number().nullable().typeError("Must be a number"),
@@ -56,10 +58,8 @@ const LogSheetForm: React.FC<LogSheetFormProps> = ({
   initialData = {},
   onSubmit,
   isUpdate = false,
-  entryData=[],
+  entryData = [],
 }) => {
-
-
   const [logData, setLogData] = useState<LogEntry[]>(entryData);
   const [entryError, setEntryError] = useState<boolean>(false);
 
@@ -88,10 +88,11 @@ const LogSheetForm: React.FC<LogSheetFormProps> = ({
     onSubmit: async (values, { setSubmitting }) => {
       try {
         await onSubmit({
-          log_sheet: values, entries: logData,
+          log_sheet: values,
+          entries: logData,
           id: 0,
           trip: 0,
-          date: ""
+          date: "",
         });
       } catch (error) {
         console.error("Form submission failed", error);
@@ -109,7 +110,11 @@ const LogSheetForm: React.FC<LogSheetFormProps> = ({
           <SecondSecForm formik={formik} />
           <Box>
             <SectionTitle title="Log Entries" />
-            <ELDEntryForm initialEntry={entryData} setEntryError={(isErr)=>setEntryError(isErr)} setLogData={(entry)=>setLogData(entry) } />
+            <ELDEntryForm
+              initialEntry={entryData}
+              setEntryError={(isErr) => setEntryError(isErr)}
+              setLogData={(entry) => setLogData(entry)}
+            />
           </Box>
 
           <ShippingSectionForm formik={formik} />
@@ -117,7 +122,11 @@ const LogSheetForm: React.FC<LogSheetFormProps> = ({
           <HourRecapSectionForm formik={formik} />
         </Stack>
       </Paper>
-      <Button type="submit" variant="contained" disabled={formik.isSubmitting || entryError}>
+      <Button
+        type="submit"
+        variant="contained"
+        disabled={formik.isSubmitting || entryError}
+      >
         {formik.isSubmitting
           ? isUpdate
             ? "Updating..."
@@ -669,8 +678,25 @@ const LogSheetFormPage: React.FC<LogSheetFormPageProps> = ({
   initialData = null,
   isUpdate = false,
 }) => {
-  const handleSubmit = async (values: LogSheet) => {
-    console.log(values);
+  const navigate = useNavigate();
+  const handleSubmit = async (values: LogDay) => {
+    
+    try {
+      if (isUpdate) {
+        const res = await logService.updateLog({
+          ...values,
+          id: initialData?.id || 0,
+        });
+        navigate(appPaths.singleLog.replace(":id", res.id.toString()));
+      } else {
+        const res = await logService.createLog(values);
+        navigate(appPaths.singleLog.replace(":id", res.id.toString()));
+      }
+
+      console.log(values);
+    } catch (error) {
+      console.error("Form submission failed", error);
+    }
   };
 
   return (

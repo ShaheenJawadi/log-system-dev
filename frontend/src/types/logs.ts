@@ -12,7 +12,7 @@ export type LogEntryType = "off" | "sb" | "driving" | "on";
 export type LogDay = {
   id: number;
   trip: number;
-  date: string;
+  date?: string;
   entries?: LogEntry[];
   log_sheet:LogSheet;
 };

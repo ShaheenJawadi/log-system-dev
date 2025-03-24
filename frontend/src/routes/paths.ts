@@ -14,9 +14,11 @@ export const appPaths={
 
 
 
-    newLog:"/new-log",
+    
     setting:"/setting",
     singleLog:"/log/:id",
+    newLog:"/log/create",
+    updateLog:"/log/update/:id",
     singleTrip:"/trip/:id",
 
 
