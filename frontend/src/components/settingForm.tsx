@@ -16,7 +16,11 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import SaveIcon from "@mui/icons-material/Save";
 import { SettingsType } from "../types/user";
+import { useEffect, useState } from "react";
+
+import * as userService from "../services/userService";
 const SettingsForm = (closeDialog: { closeDialog: () => void }) => {
+  const [loading, setLoading] = useState(true);
   const formik = useFormik<SettingsType>({
     initialValues: {
       truckInfo: "",
@@ -26,11 +30,40 @@ const SettingsForm = (closeDialog: { closeDialog: () => void }) => {
       manifestNumber: "",
       shipperCommodity: "",
     },
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      try {
+        await userService.putSettings(values);
+
+        closeDialog.closeDialog();
+      } catch (error) {
+        console.error("Error updating settings", error);
+      }
+    
     },
   });
 
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+     
+      try {
+         const response = await userService.getSettings();
+        if (response) {
+          formik.setValues(response);
+        }
+      } catch (error) {
+        console.error("Error fetching settings", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+
+
+  
   return (
     <form onSubmit={formik.handleSubmit}>
       <Stack padding={5} spacing={5}>

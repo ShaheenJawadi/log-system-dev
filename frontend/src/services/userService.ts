@@ -8,7 +8,7 @@ export const getSettings = async () => {
   return response;
 };
 export const putSettings = async (data: SettingsType) => {
-  const response = await apiService.put<SettingsType>('/auth/register/', data);
+  const response = await apiService.put<SettingsType>('/auth/settings/', data);
   return response;
 };
  
