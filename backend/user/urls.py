@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from user import views
-from user.views import RegisterView, LoginView,LogoutView,VerifyToken
+from user.views import RegisterView, LoginView, LogoutView, VerifyToken, SettingView
 
 router = DefaultRouter()
 
@@ -12,4 +12,6 @@ urlpatterns = [
     path('/login/', LoginView.as_view(), name='login'),
     path('/logout/', LogoutView.as_view(), name='logout'),
     path('/me/', VerifyToken.as_view(), name='verify_token'),
+    path('/settings/', SettingView.as_view(), name='settings'),
+
 ]

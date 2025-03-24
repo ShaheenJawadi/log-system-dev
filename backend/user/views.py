@@ -11,6 +11,9 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import UntypedToken
 
 from user.models import Settings
+from rest_framework.permissions import IsAuthenticated
+
+from user.serializers import SettingsSerializer
 
 
 def get_tokens_for_user(user):
@@ -106,3 +109,25 @@ class VerifyToken(APIView):
 
         except Exception as e:
             return Response({"detail": f"Invalid token: {str(e)}"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
+class SettingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        settings, created = Settings.objects.get_or_create(user=request.user)
+        serializer = SettingsSerializer(settings)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        settings, created = Settings.objects.get_or_create(user=request.user)
+        serializer = SettingsSerializer(settings, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
