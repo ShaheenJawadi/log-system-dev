@@ -88,10 +88,12 @@ const SingleGrid = ({
   action: (target: string) => void;
 }) => {
   return (
-    <Grid size={6}>
+    <Grid size={6} sx={{'& .MuiPaper-root': {
+            height: '100%',   
+          } }} className="grsqdqsdsqitem">
       <Card>
-        <CardContent>
-          <Stack spacing={5}>
+        <CardContent  sx={{height: '100%'}}>
+          <Stack  sx={{height: '100%'}} spacing={5}>
             <Box>
               <Typography
                 textAlign={"center"}
@@ -103,7 +105,7 @@ const SingleGrid = ({
               </Typography>
             </Box>
             <Divider />
-            <Stack spacing={3}>
+            <Stack  flex={1} spacing={3}>
               <Stack flex={1}>
                 <Typography variant="h6" color="secondary">
                   Start location:
