@@ -20,11 +20,33 @@ import { useEffect, useRef, useState } from "react";
 import { LogDay } from "../../types/logs";
 import { useNavigate, useParams } from "react-router-dom";
 import { appPaths } from "../../routes/paths";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const DriverLog = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const printSheet = useReactToPrint({ contentRef });
+  const handleDownload = async () => {
+    if (!contentRef.current) return;
+  
+    const canvas = await html2canvas(contentRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+  
+    
+    const pxToMm = 0.264; 
+    const contentWidth = 1176 * pxToMm;  
+    const contentHeight = 1172 * pxToMm; 
+  
+    const pdf = new jsPDF("l", "mm", [contentWidth, contentHeight]); 
+  
+    const imgWidth = contentWidth;  
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; 
 
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    pdf.save("driver_log.pdf");
+  };
+  
+  
   const { id } = useParams<{ id: string }>();
   const [logsData, setLogsData] = useState<LogDay>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -75,7 +97,7 @@ const DriverLog = () => {
               >
                 Print
               </Button>
-              <Button color="error" startIcon={<PictureAsPdfIcon />}>
+              <Button color="error" onClick={()=>handleDownload()} startIcon={<PictureAsPdfIcon />}>
                 Download
               </Button>
             </ButtonGroup>
