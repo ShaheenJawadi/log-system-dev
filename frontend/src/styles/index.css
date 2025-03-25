@@ -16,6 +16,7 @@ body {
   line-height: 1.5;
   color: #333;
   background-color: #f8f9fa;
+  overflow: hidden;
 }
 
 body, input, textarea, button {

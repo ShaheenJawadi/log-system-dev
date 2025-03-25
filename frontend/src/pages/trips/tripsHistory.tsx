@@ -142,7 +142,7 @@ const SingleGrid = ({
                 >
                   Total Days:
                 </Typography>
-                <Typography>500</Typography>
+                <Typography>{trip.log_days_count}</Typography>
               </Stack>
               <Stack spacing={1} direction={"row"}>
                 <LocalGasStationIcon color="error" />

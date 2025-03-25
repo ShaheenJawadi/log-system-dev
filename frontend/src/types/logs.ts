@@ -15,6 +15,7 @@ export type LogDay = {
   date?: string;
   entries?: LogEntry[];
   log_sheet:LogSheet;
+  related_log_days?: number[];
 };
 
 

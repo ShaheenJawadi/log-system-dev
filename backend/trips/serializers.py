@@ -13,6 +13,7 @@ class TripSerializer(serializers.ModelSerializer):
     pickup_location_details = LocationSerializer(source='pickup_location', read_only=True)
     dropoff_location_details = LocationSerializer(source='dropoff_location', read_only=True)
     first_log_day = serializers.SerializerMethodField()
+    log_days_count = serializers.SerializerMethodField()
     class Meta:
         model = Trip
         fields = '__all__'
@@ -20,6 +21,9 @@ class TripSerializer(serializers.ModelSerializer):
     def get_first_log_day(self, obj):
         first_log_day = obj.log_days.order_by('date').first()
         return first_log_day.id if first_log_day else None
+
+    def get_log_days_count(self, obj):
+        return obj.log_days.count()
 
 
 class TripListSerializer(TripSerializer):

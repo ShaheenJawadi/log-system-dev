@@ -26,6 +26,7 @@ export type Trip = {
     trip_date: string;
     polyline: string;  
     first_log_day?: number|null;
+    log_days_count?: number|null;
   };
 
   export type Stop = {

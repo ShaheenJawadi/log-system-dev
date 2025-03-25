@@ -50,7 +50,7 @@ const DriverLog = () => {
     <Container>
       <Stack paddingY={5} spacing={8}>
         <Stack alignItems={"center"} direction={"row"} spacing={2}>
-          <Button onClick={()=>navigate(appPaths.updateLog.replace(":id", logsData?.id.toString()|| ""))} disabled={!!logsData?.trip} startIcon={<EditIcon />} variant="contained" color="warning">
+          <Button onClick={()=>navigate(appPaths.updateLog.replace(":id", logsData?.id.toString()|| ""))}   startIcon={<EditIcon />} variant="contained" color="warning">
             Edit
           </Button>
           <Divider sx={{ flex: 1 }} />
@@ -66,17 +66,18 @@ const DriverLog = () => {
           </Stack>
         </Stack>
         {
-          logsData?.date &&<Box>
+          logsData?.trip &&<Box>
           <Typography fontSize={20} fontWeight={600} color="#818181">
-            ⚠️ This log sheet is associated with a trip that spans 4 days and
-            cannot be modified
+            ⚠️ This log sheet is associated with a trip that spans {logsData.related_log_days?.length} days  
           </Typography>
        
         <Grid justifyContent={"center"} container spacing={7}>
-          <Button variant="outlined">day 1</Button>
-          <Button variant="contained">day 2</Button>
-          <Button variant="contained">day 3</Button>
-          <Button variant="contained">day 4</Button>
+          {
+            logsData.related_log_days?.map((RlogId, index) => (
+              <Button onClick={()=>navigate(appPaths.singleLog.replace(":id", RlogId.toString()|| ""))} key={index} variant={ RlogId ==logsData.id ?"outlined" :"contained"}>{`day ${index + 1}`}</Button>
+            ))
+          }
+ 
         </Grid>
         </Box>
         }
