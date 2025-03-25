@@ -66,20 +66,22 @@ const DriverLog = () => {
           </Stack>
         </Stack>
         {
-          logsData?.trip &&<Box>
+          logsData?.trip &&<Stack spacing={5}>
           <Typography fontSize={20} fontWeight={600} color="#818181">
-            ⚠️ This log sheet is associated with a trip that spans {logsData.related_log_days?.length} days  
+          This log sheet is associated with a trip 
+            {(logsData.related_log_days?.length ?? 0) >1  ? "  that spans "+ logsData.related_log_days?.length +" days"  :""}
+             <Button color="primary" onClick={()=>navigate(appPaths.singleTrip.replace(":id", logsData.trip.toString()|| ""))} variant="text">{`🗺️  overview on map`}</Button>
           </Typography>
        
-        <Grid justifyContent={"center"} container spacing={7}>
+        {(logsData.related_log_days?.length ?? 0) >1 && (<Grid justifyContent={"center"} container spacing={5}>
           {
             logsData.related_log_days?.map((RlogId, index) => (
               <Button onClick={()=>navigate(appPaths.singleLog.replace(":id", RlogId.toString()|| ""))} key={index} variant={ RlogId ==logsData.id ?"outlined" :"contained"}>{`day ${index + 1}`}</Button>
             ))
           }
  
-        </Grid>
-        </Box>
+        </Grid>)}
+        </Stack>
         }
         
         <Paper  elevation={2}  sx={{ padding: 3 }}>
