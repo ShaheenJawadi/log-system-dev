@@ -103,16 +103,16 @@ const TripStops = () => {
                           Expected
                         </Typography>
                         <Typography fontSize={13}>
-                          Arrival:{" "}
+                          Arrival: 
                           {moment
                             .utc(stop.arrival_time)
-                            .format("MM/DD/YYYY hh:mm A")}
+                            .format("MM-DD-YYYY hh:mm A")}
                         </Typography>
                         <Typography fontSize={13}>
-                          Departure:{" "}
+                          Departure: 
                           {moment
                             .utc(stop.departure_time)
-                            .format("MM/DD/YYYY hh:mm A")}
+                            .format("MM-DD-YYYY hh:mm A")}
                         </Typography>
                       </Stack>
                     </TimelineOppositeContent>

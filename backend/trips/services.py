@@ -23,8 +23,9 @@ class RouteService:
 
     def __init__(self, trip):
         self.trip = trip
-        self.current_datetime = datetime.now()
+        self.current_datetime = trip.trip_date
         self.remaining_cycle_hours = 70 - trip.current_cycle_hours
+        self.average_driving_speed = trip.average_speed
         self.total_distance = 0
 
     def plan_route(self):

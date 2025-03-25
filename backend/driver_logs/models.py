@@ -31,8 +31,7 @@ class LogDay(models.Model):
     date = models.DateField()
     log_sheet = models.OneToOneField(LogSheet, on_delete=models.CASCADE, related_name='log_day', null=True, blank=True)
 
-    def __str__(self):
-        return f"Log for {self.date} - Trip {self.trip.id}"
+
 
 
 
@@ -50,6 +49,3 @@ class LogEntry(models.Model):
     start = models.IntegerField()
     end = models.IntegerField()
     remark = models.CharField(max_length=255, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.type} from {self.start} to {self.end}"

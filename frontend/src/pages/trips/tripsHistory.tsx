@@ -99,7 +99,7 @@ const SingleGrid = ({
                 variant="h5"
                 color="primary"
               >
-                {trip.trip_date || "date"}
+                {trip.trip_date }
               </Typography>
             </Box>
             <Divider />

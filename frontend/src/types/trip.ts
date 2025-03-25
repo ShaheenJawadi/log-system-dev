@@ -11,6 +11,8 @@ export type TripDetailsRequest  ={
     pickup_location: TripLocation;
     dropoff_location: TripLocation;
     current_cycle_hours: number;
+    trip_date: string;
+    average_speed: number;
       
 }
 

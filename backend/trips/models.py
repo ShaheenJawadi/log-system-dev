@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-
+from django.utils import timezone
 # Create your models here.
 
 class Location(models.Model):
@@ -15,8 +15,9 @@ class Trip(models.Model):
     current_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='trip_current')
     pickup_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='trip_pickup')
     dropoff_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='trip_dropoff')
-    current_cycle_hours = models.FloatField(help_text="Current cycle hours used")
-    trip_date = models.DateTimeField(auto_now_add=True)
+    current_cycle_hours = models.FloatField(default=0,help_text="Current cycle hours used")
+    trip_date = models.DateTimeField(default=timezone.now)
+    average_speed = models.FloatField(default=55, help_text="Current average speed used")
     polyline = models.TextField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trip')
 

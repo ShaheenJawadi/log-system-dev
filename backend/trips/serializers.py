@@ -14,6 +14,7 @@ class TripSerializer(serializers.ModelSerializer):
     dropoff_location_details = LocationSerializer(source='dropoff_location', read_only=True)
     first_log_day = serializers.SerializerMethodField()
     log_days_count = serializers.SerializerMethodField()
+    trip_date = serializers.DateTimeField(format="%m-%d-%Y")
     class Meta:
         model = Trip
         fields = '__all__'

@@ -10,7 +10,7 @@ from .models import Trip, Location, RouteStop
 from .serializers import (TripSerializer, RouteStopSerializer, TripListSerializer)
 from .services import RouteService
 from rest_framework.exceptions import PermissionDenied
-
+from django.utils.dateparse import parse_datetime
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
@@ -46,6 +46,8 @@ class TripViewSet(viewsets.ModelViewSet):
             pickup_location=pickup_location,
             dropoff_location=dropoff_location,
             current_cycle_hours=request.data.get('current_cycle_hours'),
+            trip_date=parse_datetime(request.data.get('trip_date')),
+            average_speed=request.data.get('average_speed'),
             user=user
         )
 

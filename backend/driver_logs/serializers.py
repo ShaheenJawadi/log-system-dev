@@ -4,6 +4,7 @@ from driver_logs.models import LogEntry, LogDay, LogSheet
 
 
 class LogSheetSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format="%m-%d-%Y")
     class Meta:
         model = LogSheet
         fields = '__all__'
@@ -16,6 +17,7 @@ class LogEntrySerializer(serializers.ModelSerializer):
 
 
 class LogDaySerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format="%m-%d-%Y")
     log_sheet = LogSheetSerializer(read_only=True)
     entries = LogEntrySerializer(many=True, read_only=True)
     related_log_days = serializers.SerializerMethodField()
