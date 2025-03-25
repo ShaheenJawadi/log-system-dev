@@ -7,11 +7,13 @@ import * as tripService from "../services/tripServices";
 import { MapPin } from "../types/map";
 import { useLocation } from "react-router-dom";
 
+ 
+type TripRequestField = "current_cycle_hours" | "average_speed" | "trip_date" | "current_location" | "pickup_location" | "dropoff_location";
+
 const MapContext = createContext<{
   isFormValid: boolean;
-  setCurrentLocation: (loc: TripLocation | null) => void;
-  setPickup: (loc: TripLocation | null) => void;
-  setDropoff: (loc: TripLocation | null) => void;
+  updateTripRequest: (field: TripRequestField, value: string | TripLocation) => void;
+ 
   generateRoute: () => void;
   pinLocations: MapPin[];
   decodedCoordinates: [number, number][];
@@ -26,9 +28,7 @@ const MapContext = createContext<{
   isDispayData: false,
   fetchSingleTrip: (id: number) => {},
   isFormValid: false,
-  setCurrentLocation: (loc: TripLocation | null) => {},
-  setPickup: (loc: TripLocation | null) => {},
-  setDropoff: (loc: TripLocation | null) => {},
+  updateTripRequest: (field: TripRequestField, value: string | TripLocation) => {},
   generateRoute: () => {},
   pinLocations: [],
   decodedCoordinates: [],
@@ -43,12 +43,11 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
     [number, number][]
   >([]);
 
-  const [currentLocation, setCurrentLocation] = useState<TripLocation | null>(
-    null
-  );
-  const [pickup, setPickup] = useState<TripLocation | null>(null);
-  const [dropoff, setDropoff] = useState<TripLocation | null>(null);
+
+  const [tripRequest, setTripRequest] = useState<TripDetailsRequest>({current_cycle_hours:5.5} as TripDetailsRequest);
+ 
   const [pinLocations, setPinLocations] = useState<MapPin[]>([]);
+
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,21 +61,15 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
 
 
   const generateRoute = async () => {
-    if (currentLocation && pickup && dropoff) {
+    if (tripRequest.current_location && tripRequest.pickup_location && tripRequest.dropoff_location) {
       setLoading(true);
       setError(null);
       setSuccessMessage(null);
 
       try {
-        const data: TripDetailsRequest = {
-          current_location: currentLocation,
-          pickup_location: pickup,
-          dropoff_location: dropoff,
-          current_cycle_hours: 5.5,
-        
-        };
+         
 
-        const response = await tripService.plan(data);
+        const response = await tripService.plan(tripRequest);
 
         if (response.trip.polyline) {
           setDecodedCoordinates(decode(response.trip.polyline));
@@ -99,9 +92,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
 
   const cleanData = () => {
     setDecodedCoordinates([]);
-    setCurrentLocation(null);
-    setDropoff(null);
-    setPickup(null);
+    setTripRequest({} as TripDetailsRequest);
     setTripStops([]);
     setIsFormValid(false);
     setDisplayData(false);
@@ -120,9 +111,12 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       const response = await tripService.getSingleTrip(id);
-      setCurrentLocation(response.trip.current_location_details);
-      setDropoff(response.trip.dropoff_location_details);
-      setPickup(response.trip.pickup_location_details);
+      setTripRequest({
+        ...tripRequest,
+        current_location: response.trip.current_location_details,
+        dropoff_location: response.trip.dropoff_location_details,
+        pickup_location: response.trip.pickup_location_details,
+      }); 
 
       if (response.trip.polyline) {
         setDecodedCoordinates(decode(response.trip.polyline));
@@ -144,35 +138,46 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     setPinLocations(() => {
       const pins: MapPin[] = [];
-      if (currentLocation) {
+      if (tripRequest?.current_location) {
         pins.push({
-          ...currentLocation,
+          ...tripRequest?.current_location,
           name: "Current Location",
           color: "error",
         });
       }
-      if (pickup) {
+      if (tripRequest?.pickup_location) {
         pins.push({
-          ...pickup,
+          ...tripRequest?.pickup_location,
           name: "Pickup Location",
           color: "secondary",
         });
       }
-      if (dropoff) {
+      if (tripRequest?.dropoff_location) {
         pins.push({
-          ...dropoff,
+          ...tripRequest?.dropoff_location,
           name: "Dropoff Location",
           color: "primary",
         });
       }
       return pins;
     });
-    if (currentLocation && pickup && dropoff) {
+    if (tripRequest.current_location && tripRequest.pickup_location && tripRequest.dropoff_location) {
       setIsFormValid(true);
     } else {
       setIsFormValid(false);
     }
-  }, [currentLocation, pickup, dropoff]);
+  }, [tripRequest.current_location, tripRequest.pickup_location,  tripRequest.dropoff_location]);
+
+
+  const updateTripRequest= (field: TripRequestField, value: string | TripLocation)  => {
+    
+    setTripRequest({
+      ...tripRequest,
+      [field]: value,
+    });
+    
+  };
+
 
   return (
     <MapContext.Provider
@@ -183,9 +188,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
         fetchSingleTrip,
         tripStops,
         isFormValid,
-        setCurrentLocation,
-        setPickup,
-        setDropoff,
+        updateTripRequest,
         generateRoute,
         pinLocations,
         decodedCoordinates,

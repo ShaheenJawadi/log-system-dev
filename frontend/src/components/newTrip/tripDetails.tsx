@@ -60,9 +60,7 @@ const TripDetails: React.FC = () => {
 const TripDetailsForm: React.FC = () => {
   const {
     isFormValid,
-    setCurrentLocation,
-    setPickup,
-    setDropoff,
+    updateTripRequest,
     generateRoute,
   } = useMapUtils();
   const [searchQuery, setSearchQuery] = useState("");
@@ -135,7 +133,7 @@ const TripDetailsForm: React.FC = () => {
         options={suggestions}
         getOptionLabel={(option) => option.address}
         onInputChange={(_, value) => setSearchQuery(value)}
-        onChange={(_, value) => setCurrentLocation(value)}
+        onChange={(_, value) => updateTripRequest("current_location",value as TripLocation)}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -177,7 +175,7 @@ const TripDetailsForm: React.FC = () => {
         options={suggestions}
         getOptionLabel={(option) => option.address}
         onInputChange={(_, value) => setSearchQuery(value)}
-        onChange={(_, value) => setPickup(value)}
+        onChange={(_, value) =>  updateTripRequest("pickup_location",value as TripLocation)}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -219,7 +217,7 @@ const TripDetailsForm: React.FC = () => {
         options={suggestions}
         getOptionLabel={(option) => option.address}
         onInputChange={(_, value) => setSearchQuery(value)}
-        onChange={(_, value) => setDropoff(value)}
+        onChange={(_, value) =>  updateTripRequest("dropoff_location",value as TripLocation)}
         renderInput={(params) => (
           <TextField
             {...params}
