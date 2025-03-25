@@ -23,7 +23,7 @@ import { Trip } from "../../types/trip";
 import { useNavigate } from "react-router-dom";
 import { appPaths } from "../../routes/paths";
 const TripsHistory = () => {
-  const { openDialog } = useDialog();
+  const { openDialog,refresh } = useDialog();
 
   const navigate = useNavigate();
   const [tripData, setTripData] = useState<Trip[]>([]);
@@ -45,7 +45,7 @@ const TripsHistory = () => {
 
   useEffect(() => {
     fetchList();
-  }, []);
+  }, [refresh]);
   const action=(target:string,id:number  , logId:number|null=null )=>{
 
     if(target==="map"){

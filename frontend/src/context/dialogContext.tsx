@@ -12,26 +12,24 @@ import * as logService from "../services/logServices";
 import SettingForm from "../components/settingForm";
 type DialogType = "deleteTrip" | "deleteLog" | "openSetting" | null;
 
-type DialogOptions = {
-  title: string;
-  content: string[];
-  actions: { label: string; onClick: () => void }[];
-};
-
 interface DialogContextType {
   openDialog: (type: DialogType, params: { id: number }) => void;
   closeDialog: () => void;
+  refresh:boolean;
 }
 
 const DialogContext = createContext<DialogContextType>({
   openDialog: () => {},
   closeDialog: () => {},
+  refresh:false
 });
 export const useDialog = () => useContext(DialogContext);
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState<DialogType>(null);
   const [itemId, setItemId] = useState<number | null>(null);
+  const [refresh, setRefresh] = useState<boolean>(false);
+
 
   const openDialog = (type: DialogType, params: { id: number }) => {
     setDialogType(type);
@@ -42,13 +40,14 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const closeDialog = () => {
     setDialogOpen(false);
     setDialogType(null);
+    setRefresh(!refresh);
   };
 
 
   
  
   return (
-    <DialogContext.Provider value={{ openDialog, closeDialog }}>
+    <DialogContext.Provider value={{refresh, openDialog, closeDialog }}>
       {children}
 
       <Dialog

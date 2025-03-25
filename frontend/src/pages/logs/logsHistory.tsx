@@ -22,7 +22,7 @@ import { LogDay } from "../../types/logs";
 import { useDialog } from "../../context/dialogContext";
 const LogsHistory = () => { 
   const navigate = useNavigate();
-  const { openDialog } = useDialog();
+  const { openDialog ,refresh } = useDialog();
   const [logsData, setLogsData] = useState<LogDay[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -42,7 +42,7 @@ const LogsHistory = () => {
 
   useEffect(() => {
     fetchList();
-  }, []);
+  }, [refresh]);
   const clickAction = (target: string, id: number ,tripId:number) => {
     if(target=="singleLog"){
       navigate(appPaths.singleLog.replace(":id", id.toString())); 
