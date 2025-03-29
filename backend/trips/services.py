@@ -164,14 +164,14 @@ class RouteService:
                         start_location.latitude + (end_location.latitude - start_location.latitude) * current_position,
                         start_location.longitude + (
                                 end_location.longitude - start_location.longitude) * current_position
-                    ) or self._create_fuel_location(start_location, end_location, current_position)
+                    ) or self._create_rest_location_at_position(start_location, end_location, current_position,"Fuel station along route")
                     fuel_end_time = current_time + timedelta(hours=0.5)
                     add_stop('fuel', fuel_location, current_time, fuel_end_time)
                     current_time = fuel_end_time
                     miles_since_fuel = 0
                 elif stop_reason == 'rest':
                     rest_location = self._create_rest_location_at_position(start_location, end_location,
-                                                                           current_position)
+                                                                           current_position,"Rest area along route")
                     rest_end_time = current_time + timedelta(hours=self.REST_PERIOD_HOURS)
                     add_stop('rest', rest_location, current_time, rest_end_time)
                     current_time = rest_end_time
@@ -248,38 +248,35 @@ class RouteService:
 
         return data['routes'][0]['distance'] * 0.000621371
 
-    def _create_rest_location(self, reference_location):
+    def _create_rest_location_at_position(self, start_location, end_location, position , address):
+        waypoints = [
+            (start_location.longitude, start_location.latitude),
+            (end_location.longitude, end_location.latitude)
+        ]
+        route_data = self._get_osrm_route(waypoints)
+        coordinates = route_data['geometry']['coordinates']
+
+        total_segments = len(coordinates) - 1
+        target_segment = int(total_segments * position)
+        target_segment = min(max(target_segment, 0), total_segments - 1)
+
+        if target_segment == total_segments - 1:
+            lon, lat = coordinates[-1]
+        else:
+            segment_start = coordinates[target_segment]
+            segment_end = coordinates[target_segment + 1]
+            segment_progress = (position * total_segments) - target_segment
+            lon = segment_start[0] + (segment_end[0] - segment_start[0]) * segment_progress
+            lat = segment_start[1] + (segment_end[1] - segment_start[1]) * segment_progress
 
         location = Location.objects.create(
-            latitude=reference_location.latitude + 0.01,
-            longitude=reference_location.longitude + 0.01,
-            address=f"Rest area near {reference_location.address}"
+            latitude=lat,
+            longitude=lon,
+            address=address
         )
         return location
 
-    def _create_rest_location_at_position(self, start_location, end_location, position):
 
-        latitude = start_location.latitude + (end_location.latitude - start_location.latitude) * position
-        longitude = start_location.longitude + (end_location.longitude - start_location.longitude) * position
-
-        location = Location.objects.create(
-            latitude=latitude,
-            longitude=longitude,
-            address=f"Rest area along route"
-        )
-        return location
-
-    def _create_fuel_location(self, start_location, end_location, position):
-
-        latitude = start_location.latitude + (end_location.latitude - start_location.latitude) * position
-        longitude = start_location.longitude + (end_location.longitude - start_location.longitude) * position
-
-        location = Location.objects.create(
-            latitude=latitude,
-            longitude=longitude,
-            address=f"Fuel station along route"
-        )
-        return location
 
     def _add_stop(self, stop_type, location, arrival_time, departure_time):
         RouteStop.objects.create(
@@ -375,8 +372,6 @@ class RouteService:
                 end=1440,
                 remark="Off duty"
             )
-
-        
 
     def _get_entry_type(self, stop_type):
         if stop_type == 'rest':
