@@ -15,7 +15,6 @@ def _encode_polyline(coordinates):
 class RouteService:
     OSRM_BASE_URL = "http://router.project-osrm.org/route/v1/driving/"
     OVERPASS_API_URL = "https://overpass-api.de/api/interpreter"
-    AVERAGE_SPEED_MPH = 55  # Avg speed
     MAX_DRIVING_HOURS = 11  # Max consecutive driving hours
     MAX_DUTY_HOURS = 14  # Max on-duty hours
     MAX_CYCLE_HOURS = 70  # 70-hour/8-day rule
@@ -26,7 +25,7 @@ class RouteService:
     def __init__(self, trip):
         self.trip = trip
         self.current_datetime = trip.trip_date
-        self.remaining_cycle_hours = 70 - trip.current_cycle_hours
+        self.remaining_cycle_hours = self.MAX_CYCLE_HOURS - trip.current_cycle_hours
         self.average_driving_speed = trip.average_speed
         self.total_distance = 0
 
@@ -39,9 +38,10 @@ class RouteService:
         route_data = self._get_osrm_route(waypoints)
         encoded_polyline = _encode_polyline(route_data['geometry']['coordinates'])
         self.trip.polyline = encoded_polyline
-        self.trip.save()
 
         self.total_distance = route_data['distance'] * 0.000621371
+        self.trip.total_distance = self.total_distance
+        self.trip.save()
 
         self._calculate_stops(route_data)
         self._generate_log_entries()
@@ -139,7 +139,7 @@ class RouteService:
                     current_time = rest_end_time
                     continue
 
-                miles_to_next_stop = hours_to_next_stop * self.AVERAGE_SPEED_MPH
+                miles_to_next_stop = hours_to_next_stop * self.average_driving_speed
 
                 if miles_to_fuel <= miles_to_next_stop and miles_to_fuel < remaining_distance:
                     distance_covered = miles_to_fuel
@@ -151,7 +151,7 @@ class RouteService:
                     distance_covered = remaining_distance
                     stop_reason = 'destination'
 
-                drive_time = distance_covered / self.AVERAGE_SPEED_MPH
+                drive_time = distance_covered / self.average_driving_speed
                 drive_end_time = current_time + timedelta(hours=drive_time)
                 add_stop('driving', start_location, current_time, drive_end_time)
                 current_time = drive_end_time
@@ -302,7 +302,7 @@ class RouteService:
         current_date = trip_start_time.date()
         current_log_day = LogDay.objects.create(trip=self.trip, date=current_date)
         previous_end_time = trip_start_time
- 
+
         if trip_start_time.hour * 60 + trip_start_time.minute > 0:
             LogEntry.objects.create(
                 log_day=current_log_day,
@@ -336,7 +336,6 @@ class RouteService:
                 current_log_day = LogDay.objects.create(trip=self.trip, date=current_date)
                 previous_end_time = datetime.combine(current_date, datetime.min.time(), tzinfo=pytz.UTC)
 
-     
             start_minutes = arrival_time.hour * 60 + arrival_time.minute
             end_minutes = departure_time.hour * 60 + departure_time.minute
             if departure_time.date() > arrival_time.date():
@@ -377,15 +376,17 @@ class RouteService:
                 remark="Off duty"
             )
 
+        
+
     def _get_entry_type(self, stop_type):
         if stop_type == 'rest':
-            return 'sb' 
+            return 'sb'
         elif stop_type in ['pickup', 'dropoff', 'fuel']:
-            return 'on'  
+            return 'on'
         elif stop_type == 'reset':
-            return 'off' 
+            return 'off'
         else:
-            return 'driving'  
+            return 'driving'
 
     def _get_remark(self, stop):
         if stop.stop_type == 'pickup':

@@ -11,6 +11,8 @@ from .serializers import (TripSerializer, RouteStopSerializer, TripListSerialize
 from .services import RouteService
 from rest_framework.exceptions import PermissionDenied
 from django.utils.dateparse import parse_datetime
+
+
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
@@ -54,7 +56,6 @@ class TripViewSet(viewsets.ModelViewSet):
         route_service = RouteService(trip)
         planned_trip = route_service.plan_route()
 
-
         # complete  data trip
         response_data = self.get_serialized_trip_data(planned_trip)
 
@@ -63,12 +64,25 @@ class TripViewSet(viewsets.ModelViewSet):
         user_settings = Settings.objects.filter(user=user).first() or Settings()
 
         for log_day in log_days:
+
+            driving_entries = LogEntry.objects.filter(log_day=log_day, type__in=['driving', 'on'])
+            total_driving_minutes = 0
+            total_on_duty_minutes = 0
+            for entry in driving_entries:
+                if entry.type == "driving":
+                    total_driving_minutes += entry.end - entry.start
+                elif entry.type == "on":
+                    total_on_duty_minutes += entry.end - entry.start
+            driving_hours = total_driving_minutes / 60
+            on_duty_hours = total_on_duty_minutes / 60
+            log_day.distance = driving_hours * trip.average_speed
+            log_day.save()
             log_sheet = LogSheet.objects.create(
                 user=user,
                 date=log_day.date,
-                totalMileageToday=0,
-                totalMilesToday=0,
-                OnDutyHoursToday=0,
+                totalMileageToday=log_day.distance,
+                totalMilesToday=log_day.distance,
+                OnDutyHoursToday=on_duty_hours + driving_hours,
                 fromLocation=pickup_location.address,
                 toLocation=dropoff_location.address,
 
@@ -93,8 +107,6 @@ class TripViewSet(viewsets.ModelViewSet):
         trip_data = TripSerializer(trip).data
         log_days_data = LogDaySerializer(log_days, many=True).data
         stops_data = RouteStopSerializer(stops, many=True).data
-
-
 
         response_data = {
             'trip': trip_data,

@@ -106,7 +106,7 @@ const SingleGrid = ({
             </Box>
             <Divider />
             <Stack  flex={1} spacing={3}>
-              <Stack flex={1}>
+              <Stack flex={1} direction={"row"}>
                 <Typography variant="h6" color="secondary">
                   Start location:
                 </Typography>
@@ -155,7 +155,7 @@ const SingleGrid = ({
                 >
                   Fueling:
                 </Typography>
-                <Typography>2</Typography>
+                <Typography>{trip.fuel_count}</Typography>
               </Stack>
 
               <Stack spacing={1} direction={"row"}>
@@ -167,7 +167,7 @@ const SingleGrid = ({
                 >
                   Rest:
                 </Typography>
-                <Typography>4</Typography>
+                <Typography>{trip.rest_count}</Typography>
               </Stack>
               <Stack spacing={1} direction={"row"}>
                 <RouteIcon color="primary" />
@@ -178,7 +178,7 @@ const SingleGrid = ({
                 >
                   Total Miles:
                 </Typography>
-                <Typography>500</Typography>
+                <Typography>{trip?.total_distance}</Typography>
               </Stack>
               <Stack direction={"row"}></Stack>
             </Stack>

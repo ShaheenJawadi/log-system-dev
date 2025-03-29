@@ -149,7 +149,7 @@ const SingleLogGrid = ({
                 >
                   Total Miles:
                 </Typography>
-                <Typography>500</Typography>
+                <Typography>{single.distance}</Typography>
               </Stack>
               <Stack direction={"row"}></Stack>
             </Stack>
