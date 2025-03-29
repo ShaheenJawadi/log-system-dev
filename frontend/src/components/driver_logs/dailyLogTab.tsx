@@ -19,7 +19,7 @@ const DailyDriverLogTab = ({logData}:{logData: LogEntry[]}) => {
     const parent = canvas.parentElement;
     if (canvas && parent) { 
         canvas.width = parent.clientWidth; 
-        canvas.height = 350;  
+        canvas.height = 380;  
       }
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -222,16 +222,16 @@ const DailyDriverLogTab = ({logData}:{logData: LogEntry[]}) => {
       ctx.save();
       ctx.font = "10px Arial";
 
-      changePoints.forEach((point) => {
+      changePoints.forEach((point , index) => {
         if (point.remark) {
           ctx.beginPath();
           ctx.moveTo(point.x, remarksTop);
-          ctx.lineTo(point.x, remarksTop + remarksHeight + 25);
+          ctx.lineTo(point.x, remarksTop + remarksHeight+15*(changePoints.length-index)  );
           ctx.stroke();
 
           ctx.save();
-          ctx.translate(point.x, remarksTop + remarksHeight + 30);
-          ctx.rotate(-Math.PI / 4);
+          ctx.translate(point.x+2, remarksTop + remarksHeight +15*(changePoints.length-index) );
+    
           ctx.textAlign = "left";
           ctx.fillText(point.remark, 0, 0);
           ctx.restore();
