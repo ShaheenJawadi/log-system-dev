@@ -16,6 +16,7 @@ import { useMap } from "react-leaflet";
 import { useMapUtils } from "../context/mapContext";
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import HotelIcon from '@mui/icons-material/Hotel';
+import NotificationsPausedIcon from '@mui/icons-material/NotificationsPaused';
 const MapComponant = () => {
   const theme = useTheme();
   const { pinLocations ,decodedCoordinates , tripStops} = useMapUtils();
@@ -82,7 +83,7 @@ const MapComponant = () => {
   );
 };
 
-const markerIcon = (color: string , type: "rest"|"loc"|"fuel"= "loc") =>
+const markerIcon = (color: string , type: "rest"|"loc"|"fuel"|"reset"= "loc") =>
   L.divIcon({
     className: "custom-icon",
     html: ReactDOMServer.renderToString(
@@ -97,6 +98,10 @@ const markerIcon = (color: string , type: "rest"|"loc"|"fuel"= "loc") =>
       ) : type === "rest" ? (
         
         <HotelIcon    style={{ fontSize: 30,  color:"#FDB528" }} />
+
+      ) : type === "reset" ? (
+        
+        <NotificationsPausedIcon  style={{ fontSize: 30 , color:"#F84960" }} />
 
       ) : null
     ),

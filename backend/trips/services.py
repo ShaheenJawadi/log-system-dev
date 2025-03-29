@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 import polyline
 from driver_logs.models import LogEntry, LogDay
 from trips.models import Location, RouteStop
+from django.utils import timezone
+import pytz
 
 
 def _encode_polyline(coordinates):
@@ -59,111 +61,125 @@ class RouteService:
         return data['routes'][0]
 
     def _calculate_stops(self, route_data):
-        print("Entering _calculate_stops")
         total_distance_miles = route_data['distance'] * 0.000621371
-
         pickup_distance = self._calculate_distance(
             (self.trip.current_location.longitude, self.trip.current_location.latitude),
             (self.trip.pickup_location.longitude, self.trip.pickup_location.latitude)
         )
-
         dropoff_distance = self._calculate_distance(
             (self.trip.pickup_location.longitude, self.trip.pickup_location.latitude),
             (self.trip.dropoff_location.longitude, self.trip.dropoff_location.latitude)
         )
 
         current_time = self.current_datetime
-        driving_hours_since_break = 0
-        on_duty_hours_since_break = 0
+        if timezone.is_naive(current_time):
+            current_time = timezone.make_aware(current_time, pytz.UTC)
+
+        self.remaining_cycle_hours = self.MAX_CYCLE_HOURS - self.trip.current_cycle_hours
+        driving_hours_since_rest = 0
+        on_duty_hours_since_rest = 0
+        duty_start_time = None
         miles_since_fuel = 0
         stops = []
         last_stop_type = None
 
         def add_stop(stop_type, location, start_time, end_time):
-            nonlocal last_stop_type
-            if last_stop_type == stop_type:
+            nonlocal last_stop_type, driving_hours_since_rest, on_duty_hours_since_rest, duty_start_time
+            if last_stop_type == stop_type and stop_type in ['pickup', 'dropoff']:
                 return
-            print(stop_type, location, start_time, end_time)
+            duration_hours = (end_time - start_time).total_seconds() / 3600
+            if stop_type in ['driving', 'fuel', 'pickup', 'dropoff']:
+                if duty_start_time is None:
+                    duty_start_time = start_time
+                if (duty_start_time and (
+                        current_time - duty_start_time).total_seconds() / 3600 + duration_hours > self.MAX_DUTY_HOURS) or \
+                        (
+                                stop_type == 'driving' and driving_hours_since_rest + duration_hours > self.MAX_DRIVING_HOURS) or \
+                        (self.remaining_cycle_hours - duration_hours < 0):
+                    rest_end_time = start_time + timedelta(hours=self.REST_PERIOD_HOURS)
+                    stops.append(self._add_stop('rest', location, start_time, rest_end_time))
+                    driving_hours_since_rest = 0
+                    on_duty_hours_since_rest = 0
+                    duty_start_time = None
+                    return
+                if stop_type == 'driving':
+                    driving_hours_since_rest += duration_hours
+                on_duty_hours_since_rest += duration_hours
+                self.remaining_cycle_hours -= duration_hours
+            elif stop_type in ['rest', 'reset']:
+                driving_hours_since_rest = 0
+                on_duty_hours_since_rest = 0
+                duty_start_time = None
+                if stop_type == 'reset':
+                    self.remaining_cycle_hours = self.MAX_CYCLE_HOURS
             stops.append(self._add_stop(stop_type, location, start_time, end_time))
             last_stop_type = stop_type
 
         def process_route(start_location, end_location, distance, stop_type):
-            nonlocal current_time, driving_hours_since_break, on_duty_hours_since_break, miles_since_fuel
+            nonlocal current_time, driving_hours_since_rest, on_duty_hours_since_rest, duty_start_time, miles_since_fuel
             remaining_distance = distance
             current_position = 0
 
             while remaining_distance > 0:
-                print(f"Remaining Distance: {remaining_distance}")
                 if self.remaining_cycle_hours <= 0:
                     reset_end_time = current_time + timedelta(hours=34)
                     add_stop('reset', start_location, current_time, reset_end_time)
                     current_time = reset_end_time
-                    self.remaining_cycle_hours = self.MAX_CYCLE_HOURS
-                    driving_hours_since_break = 0
-                    on_duty_hours_since_break = 0
+                    continue
 
-                hours_to_next_limit = min(
-                    self.MAX_DRIVING_HOURS - driving_hours_since_break,
-                    self.MAX_DUTY_HOURS - on_duty_hours_since_break,
-                    self.remaining_cycle_hours
-                )
-                miles_to_next_limit = hours_to_next_limit * self.AVERAGE_SPEED_MPH
+                hours_to_drive_limit = self.MAX_DRIVING_HOURS - driving_hours_since_rest
+                hours_to_duty_limit = self.MAX_DUTY_HOURS - on_duty_hours_since_rest if duty_start_time else self.MAX_DUTY_HOURS
+                hours_to_cycle_limit = self.remaining_cycle_hours
                 miles_to_fuel = self.FUEL_INTERVAL - miles_since_fuel
 
-                if miles_to_fuel <= miles_to_next_limit and miles_to_fuel < remaining_distance:
-                    # fuel
+                hours_to_next_stop = min(hours_to_drive_limit, hours_to_duty_limit, hours_to_cycle_limit)
+                if hours_to_next_stop <= 0:
+                    rest_end_time = current_time + timedelta(hours=self.REST_PERIOD_HOURS)
+                    add_stop('rest', start_location, current_time, rest_end_time)
+                    current_time = rest_end_time
+                    continue
+
+                miles_to_next_stop = hours_to_next_stop * self.AVERAGE_SPEED_MPH
+
+                if miles_to_fuel <= miles_to_next_stop and miles_to_fuel < remaining_distance:
                     distance_covered = miles_to_fuel
-                elif miles_to_next_limit < remaining_distance:
-                    # rest
-                    distance_covered = miles_to_next_limit
+                    stop_reason = 'fuel'
+                elif miles_to_next_stop < remaining_distance:
+                    distance_covered = miles_to_next_stop
+                    stop_reason = 'rest'
                 else:
-                    # final dest
                     distance_covered = remaining_distance
+                    stop_reason = 'destination'
 
                 drive_time = distance_covered / self.AVERAGE_SPEED_MPH
-                current_time += timedelta(hours=drive_time)
-                driving_hours_since_break += drive_time
-                on_duty_hours_since_break += drive_time
-                self.remaining_cycle_hours -= drive_time
-
+                drive_end_time = current_time + timedelta(hours=drive_time)
+                add_stop('driving', start_location, current_time, drive_end_time)
+                current_time = drive_end_time
                 current_position += distance_covered / distance
                 miles_since_fuel += distance_covered
                 remaining_distance -= distance_covered
 
-                if distance_covered == miles_to_fuel:
+                if stop_reason == 'fuel':
                     fuel_location = self._find_gas_station(
                         start_location.latitude + (end_location.latitude - start_location.latitude) * current_position,
                         start_location.longitude + (
-                                end_location.longitude - start_location.longitude) * current_position)
-                    if not fuel_location:
-                        fuel_location = self._create_fuel_location(
-                            self.trip.current_location,
-                            self.trip.pickup_location,
-                            current_position
-                        )
-
-                    add_stop('fuel', fuel_location, current_time, current_time + timedelta(hours=0.5))
-                    current_time += timedelta(hours=0.5)
-                    on_duty_hours_since_break += 0.5
-                    self.remaining_cycle_hours -= 0.5
+                                end_location.longitude - start_location.longitude) * current_position
+                    ) or self._create_fuel_location(start_location, end_location, current_position)
+                    fuel_end_time = current_time + timedelta(hours=0.5)
+                    add_stop('fuel', fuel_location, current_time, fuel_end_time)
+                    current_time = fuel_end_time
                     miles_since_fuel = 0
-
-                elif distance_covered == miles_to_next_limit:
+                elif stop_reason == 'rest':
                     rest_location = self._create_rest_location_at_position(start_location, end_location,
                                                                            current_position)
-                    add_stop('rest', rest_location, current_time,
-                             current_time + timedelta(hours=self.REST_PERIOD_HOURS))
-                    current_time += timedelta(hours=self.REST_PERIOD_HOURS)
-                    driving_hours_since_break = 0
-                    on_duty_hours_since_break = 0
+                    rest_end_time = current_time + timedelta(hours=self.REST_PERIOD_HOURS)
+                    add_stop('rest', rest_location, current_time, rest_end_time)
+                    current_time = rest_end_time
 
             add_stop(stop_type, end_location, current_time, current_time + timedelta(hours=1))
             current_time += timedelta(hours=1)
-            on_duty_hours_since_break += 1
-            self.remaining_cycle_hours -= 1
 
         process_route(self.trip.current_location, self.trip.pickup_location, pickup_distance, 'pickup')
-
         process_route(self.trip.pickup_location, self.trip.dropoff_location, dropoff_distance, 'dropoff')
 
         return stops
@@ -275,105 +291,72 @@ class RouteService:
         )
 
     def _generate_log_entries(self):
-
         stops = self.trip.stops.all().order_by('arrival_time')
-
         if not stops:
             return
 
-        current_date = stops[0].arrival_time.date()
-        current_log_day = LogDay.objects.create(trip=self.trip, date=current_date)
-        previous_entry_end = 0
+        trip_start_time = self.current_datetime
+        if timezone.is_naive(trip_start_time):
+            trip_start_time = timezone.make_aware(trip_start_time, pytz.UTC)
 
-        for i, stop in enumerate(stops):
-            stop_date = stop.arrival_time.date()
+        current_date = trip_start_time.date()
+        current_log_day = LogDay.objects.create(trip=self.trip, date=current_date)
+        previous_end_time = trip_start_time
+ 
+        if trip_start_time.hour * 60 + trip_start_time.minute > 0:
+            LogEntry.objects.create(
+                log_day=current_log_day,
+                type='off',
+                start=0,
+                end=trip_start_time.hour * 60 + trip_start_time.minute,
+                remark="Off duty before trip start"
+            )
+
+        for stop in stops:
+            arrival_time = stop.arrival_time
+            departure_time = stop.departure_time
+            if timezone.is_naive(arrival_time):
+                arrival_time = timezone.make_aware(arrival_time, pytz.UTC)
+            if timezone.is_naive(departure_time):
+                departure_time = timezone.make_aware(departure_time, pytz.UTC)
+
+            stop_date = arrival_time.date()
 
             if stop_date != current_date:
-
-                if previous_entry_end < 24 * 60:
+                last_minutes = previous_end_time.hour * 60 + previous_end_time.minute
+                if last_minutes < 1440:
                     LogEntry.objects.create(
                         log_day=current_log_day,
                         type='off',
-                        start=previous_entry_end,
-                        end=24 * 60,
+                        start=last_minutes,
+                        end=1440,
                         remark="Off duty"
                     )
-
                 current_date = stop_date
                 current_log_day = LogDay.objects.create(trip=self.trip, date=current_date)
-                previous_entry_end = 0
+                previous_end_time = datetime.combine(current_date, datetime.min.time(), tzinfo=pytz.UTC)
 
-            start_minutes = (stop.arrival_time.hour * 60) + stop.arrival_time.minute
-
-            if start_minutes > previous_entry_end:
-
-                if i > 0:
-                    remark = f"Driving to {stop.location.address}"
-                else:
-                    remark = f"Driving to {stop.location.address}"
-
+     
+            start_minutes = arrival_time.hour * 60 + arrival_time.minute
+            end_minutes = departure_time.hour * 60 + departure_time.minute
+            if departure_time.date() > arrival_time.date():
                 LogEntry.objects.create(
                     log_day=current_log_day,
-                    type='driving',
-                    start=previous_entry_end,
-                    end=start_minutes,
-                    remark=remark
+                    type=self._get_entry_type(stop.stop_type),
+                    start=start_minutes,
+                    end=1440,
+                    remark=self._get_remark(stop)
                 )
-
-            end_minutes = (stop.departure_time.hour * 60) + stop.departure_time.minute
-
-            if end_minutes <= start_minutes and stop.departure_time.date() > stop.arrival_time.date():
-
-                if stop.stop_type == 'rest':
-
-                    LogEntry.objects.create(
-                        log_day=current_log_day,
-                        type='sb',
-                        start=start_minutes,
-                        end=24 * 60,
-                        remark="Rest period"
-                    )
-
-                    next_date = current_date + timedelta(days=1)
-                    next_log_day = LogDay.objects.create(trip=self.trip, date=next_date)
-
-                    LogEntry.objects.create(
-                        log_day=next_log_day,
-                        type='sb',
-                        start=0,
-                        end=end_minutes,
-                        remark="Rest period (continued)"
-                    )
-
-                    current_date = next_date
-                    current_log_day = next_log_day
-                else:
-
-                    LogEntry.objects.create(
-                        log_day=current_log_day,
-                        type=self._get_entry_type(stop.stop_type),
-                        start=start_minutes,
-                        end=24 * 60,
-                        remark=self._get_remark(stop)
-                    )
-
-                    next_date = current_date + timedelta(days=1)
-                    next_log_day = LogDay.objects.create(trip=self.trip, date=next_date)
-
-                    LogEntry.objects.create(
-                        log_day=next_log_day,
-                        type=self._get_entry_type(stop.stop_type),
-                        start=0,
-                        end=end_minutes,
-                        remark=f"{self._get_remark(stop)} (continued)"
-                    )
-
-                    current_date = next_date
-                    current_log_day = next_log_day
-
-                previous_entry_end = end_minutes
+                current_date = departure_time.date()
+                current_log_day = LogDay.objects.create(trip=self.trip, date=current_date)
+                LogEntry.objects.create(
+                    log_day=current_log_day,
+                    type=self._get_entry_type(stop.stop_type),
+                    start=0,
+                    end=end_minutes,
+                    remark=f"{self._get_remark(stop)} (continued)"
+                )
             else:
-
                 LogEntry.objects.create(
                     log_day=current_log_day,
                     type=self._get_entry_type(stop.stop_type),
@@ -381,24 +364,28 @@ class RouteService:
                     end=end_minutes,
                     remark=self._get_remark(stop)
                 )
-                previous_entry_end = end_minutes
 
-        if previous_entry_end < 24 * 60:
+            previous_end_time = departure_time
+
+        last_minutes = previous_end_time.hour * 60 + previous_end_time.minute
+        if last_minutes < 1440:
             LogEntry.objects.create(
                 log_day=current_log_day,
                 type='off',
-                start=previous_entry_end,
-                end=24 * 60,
+                start=last_minutes,
+                end=1440,
                 remark="Off duty"
             )
 
     def _get_entry_type(self, stop_type):
         if stop_type == 'rest':
-            return 'sb'
+            return 'sb' 
         elif stop_type in ['pickup', 'dropoff', 'fuel']:
-            return 'on'
+            return 'on'  
+        elif stop_type == 'reset':
+            return 'off' 
         else:
-            return 'driving'
+            return 'driving'  
 
     def _get_remark(self, stop):
         if stop.stop_type == 'pickup':
@@ -409,5 +396,7 @@ class RouteService:
             return f"Fueling at {stop.location.address}"
         elif stop.stop_type == 'rest':
             return "Rest period"
+        elif stop.stop_type == 'reset':
+            return "34-hour reset"
         else:
             return f"Activity at {stop.location.address}"

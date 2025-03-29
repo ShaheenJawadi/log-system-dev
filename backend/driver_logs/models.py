@@ -32,6 +32,13 @@ class LogDay(models.Model):
     log_sheet = models.OneToOneField(LogSheet, on_delete=models.CASCADE, related_name='log_day', null=True, blank=True)
     distance = models.FloatField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        if self.distance == 0 or self.distance is None:
+            self.distance = 0.0
+        else:
+            self.distance = round(self.distance, 2)
+        super(LogDay, self).save(*args, **kwargs)
+
 
 
 

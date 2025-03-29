@@ -20,7 +20,7 @@ import OutboxIcon from "@mui/icons-material/Outbox";
 import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import { Stop } from "../../types/trip";
 import { transparentColor } from "../../utils/constatnts";
-
+import NotificationsPausedIcon from '@mui/icons-material/NotificationsPaused';
 const StopsBox = styled(Slide)(({ theme }) => ({
   maxWidth: "25vw",
   height: "100%", 
@@ -50,6 +50,12 @@ const TripStops = () => {
           icon: <LocalGasStationIcon />,
           color: "info",
           title: "Fuel Stop",
+        };
+        case "reset":
+        return {
+          icon: <NotificationsPausedIcon />,
+          color: "error",
+          title: "34 hour reset",
         };
       default:
         return {
@@ -90,7 +96,8 @@ const TripStops = () => {
             </Stack>
             <Box width={"100%"}>
               <Timeline position="left">
-                {tripStops.map((stop, index) => (
+                {tripStops.map((stop, index) => (stop.stop_type as string) !== "driving" && (
+                  
                   <TimelineItem>
                     <TimelineOppositeContent
                       sx={{ m: "auto 0" }}

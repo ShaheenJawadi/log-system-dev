@@ -34,7 +34,7 @@ export type Trip = {
   export type Stop = {
     id: number;
     location_details: TripLocation;
-    stop_type: 'pickup' | 'dropoff' |'fuel' | 'rest';
+    stop_type: 'pickup' | 'dropoff' |'fuel' | 'rest'|'reset';
     arrival_time: string;
     departure_time: string;
     trip: number;
