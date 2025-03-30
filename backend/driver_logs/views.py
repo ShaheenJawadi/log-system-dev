@@ -14,7 +14,7 @@ class LogsView(viewsets.ModelViewSet):
     serializer_class = LogDaySerializer
 
     def get_queryset(self):
-        return LogDay.objects.filter(log_sheet__user=self.request.user)
+        return LogDay.objects.filter(log_sheet__user=self.request.user).order_by('-date')
 
     def destroy(self, request, *args, **kwargs):
         logDay = self.get_object()

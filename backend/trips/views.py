@@ -133,6 +133,6 @@ class TripViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         user = request.user
-        trips = self.get_queryset().filter(user=user)
+        trips = self.get_queryset().filter(user=user).order_by('-trip_date')
         response_data = TripListSerializer(trips, many=True).data
         return Response(response_data)
