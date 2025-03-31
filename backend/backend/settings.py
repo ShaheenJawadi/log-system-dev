@@ -27,7 +27,11 @@ SECRET_KEY = 'django-insecure-7@%ag&+41#&nhuh%$pcd+=a%822gsf#nmpyc1((z50-!%66htv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "log-system-dev.onrender.com", 
+    "127.0.0.1",
+    "localhost",
+]
 
 
 # Application definition
@@ -153,15 +157,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://log-system-dev.vercel.app",
-    "https://log-system-dev.onrender.com/"
+    "https://log-system-dev.vercel.app"
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "https://log-system-dev.vercel.app",
-    "https://log-system-dev.onrender.com/"
+    "https://log-system-dev.vercel.app"
 ]
 
 
