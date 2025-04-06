@@ -99,11 +99,7 @@ const markerIcon = (color: string , type: "rest"|"loc"|"fuel"|"reset"= "loc") =>
         
         <HotelIcon    style={{ fontSize: 30,  color:"#FDB528" }} />
 
-      ) : type === "reset" ? (
-        
-        <NotificationsPausedIcon  style={{ fontSize: 30 , color:"#F84960" }} />
-
-      ) : null
+      )  : null
     ),
     iconSize: [30, 30],
     iconAnchor: [15, 30],
