@@ -30,7 +30,9 @@ const MapContext = createContext<{
   isDispayData: boolean;
   tripData: Trip | null;
   cleanData: () => void;
+  loading?: boolean;
 }>({
+  loading: false,
   cleanData: () => {},
   tripData: null,
   isDispayData: false,
@@ -71,6 +73,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
   const [tripData, setTripData] = useState<Trip | null>(null);
 
   const generateRoute = async () => {
+    setLoading(true);
     if (
       tripRequest.current_location &&
       tripRequest.pickup_location &&
@@ -93,6 +96,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
         setTripData(response.trip);
 
         setSuccessMessage("Route generated successfully!");
+        
       } catch (error) {
         console.error("Error generating route:", error);
         setError("Failed to generate route. Please try again later.");
@@ -107,7 +111,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
     setTripRequest({
       current_cycle_hours: 0,
       average_speed: 55,
-      trip_date: (new Date().toISOString()) as String,
+      trip_date: new Date().toISOString() as String,
     } as TripDetailsRequest);
     setTripStops([]);
     setIsFormValid(false);
@@ -194,9 +198,8 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
 
   const updateTripRequest = (
     field: TripRequestField,
-    value: string | TripLocation |number
+    value: string | TripLocation | number
   ) => {
-    
     setTripRequest({
       ...tripRequest,
       [field]: value,
@@ -206,6 +209,7 @@ export const MapUtilsProvider = ({ children }: { children: ReactNode }) => {
   return (
     <MapContext.Provider
       value={{
+        loading,
         cleanData,
         tripData,
         isDispayData,

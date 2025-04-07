@@ -32,6 +32,7 @@ export type Trip = {
   total_distance?: number;
   fuel_count?: number;
   rest_count?: number;
+  average_speed: number;
 };
 
 export type Stop = {

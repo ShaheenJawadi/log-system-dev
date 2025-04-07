@@ -58,7 +58,7 @@ const TripDetails: React.FC = () => {
   );
 };
 const TripDetailsForm: React.FC = () => {
-  const { isFormValid, updateTripRequest, generateRoute } = useMapUtils();
+  const { isFormValid, updateTripRequest, generateRoute ,loading} = useMapUtils();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<TripLocation[]>([]);
 
@@ -193,11 +193,12 @@ const TripDetailsForm: React.FC = () => {
 
       <Button
         startIcon={<AutoFixHighIcon />}
+     
         onClick={() => generateRoute()}
         size="large"
         variant="contained"
         color="primary"
-        disabled={!isFormValid}
+        disabled={!isFormValid || loading}
       >
         Generate a trip plan
       </Button>
@@ -243,14 +244,14 @@ const DisplayTripDetails: React.FC = () => {
         <Stack direction={"row"} spacing={2}>
           <Typography variant="body1">Current Cycle used (Hrs): </Typography>
           <Typography fontSize={18} fontWeight={600}>
-            {tripData?.current_cycle_hours}
+            {tripData?.current_cycle_hours} Hrs
           </Typography>
         </Stack>
 
         <Stack direction={"row"} spacing={2}>
           <Typography variant="body1">Average Driving speed : </Typography>
           <Typography fontSize={18} fontWeight={600}>
-            {/*  {tripData?.current_location_details.address} */}
+          {tripData?.average_speed} mph
           </Typography>
         </Stack>
         <Button
