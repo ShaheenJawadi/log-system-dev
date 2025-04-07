@@ -17,6 +17,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { appPaths } from "../../routes/paths"; 
 import * as authService from "../../services/authServices";  
+import { toast } from "react-toastify";
 
 
 const RegisterPage = () => {
@@ -50,9 +51,10 @@ const RegisterPage = () => {
       try {
         const response = await authService.register(values);  
         console.log("Registration successful", response);
+        toast.success("Registration successful! Please log in.");
         navigate(appPaths.login);  
       } catch (error) {
-        console.error("Registration failed", error);
+         toast.error("Registration failed! Please try again."); 
       } finally {
         setSubmitting(false);
       }

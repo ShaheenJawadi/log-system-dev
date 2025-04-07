@@ -3,6 +3,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import themeOptions from "./themeOptions";  
 import { createTheme } from "@mui/material/styles";
 import { ReactNode } from "react";
+import { ToastContainer } from "react-toastify";
 
 const AppTheme = ({ children }: { children: ReactNode }) => { 
   const theme = createTheme(themeOptions());
@@ -10,7 +11,8 @@ const AppTheme = ({ children }: { children: ReactNode }) => {
       <ThemeProvider theme={theme}>
         <>
           <CssBaseline /> 
-          {children}
+          <ToastContainer />
+          {children} 
         </>
       </ThemeProvider>
   );

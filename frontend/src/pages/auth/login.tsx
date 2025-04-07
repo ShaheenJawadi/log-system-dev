@@ -16,15 +16,16 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { appPaths } from "../../routes/paths";
-import * as authService from "../../services/authServices";  
-import { setToken , setRefreshToken, getToken } from "../../utils/token";
+import * as authService from "../../services/authServices";
+import { setToken, setRefreshToken, getToken } from "../../utils/token";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
- 
+
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -32,26 +33,38 @@ const LoginPage = () => {
     },
     validationSchema: Yup.object({
       username: Yup.string().required("Username is required"),
-      password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+      password: Yup.string()
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const response = await authService.login(values);
-        setToken(response.tokens.access);
-        setRefreshToken(response?.tokens?.refresh || '');
-     
+        const res = await authService.login(values);
+        setToken(res.tokens.access);
+        setRefreshToken(res?.tokens?.refresh || '');
         window.location.href = appPaths.home;
       } catch (error) { 
-        console.error("Login failed", error);
+        toast.error("Login failed! Please check your credentials.");
       } finally {
         setSubmitting(false);
       }
-    },
+    }
+    
   });
 
   return (
-    <Stack spacing={4} component="form" onSubmit={formik.handleSubmit}> 
-      <FormControl variant="outlined" error={formik.touched.username && Boolean(formik.errors.username)}>
+    <Stack
+      spacing={4}
+      component="form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        formik.handleSubmit(e);
+      }}
+    >
+      <FormControl
+        variant="outlined"
+        error={formik.touched.username && Boolean(formik.errors.username)}
+      >
         <InputLabel>Username</InputLabel>
         <OutlinedInput
           type="text"
@@ -65,8 +78,11 @@ const LoginPage = () => {
           <FormHelperText>{formik.errors.username}</FormHelperText>
         )}
       </FormControl>
- 
-      <FormControl variant="outlined" error={formik.touched.password && Boolean(formik.errors.password)}>
+
+      <FormControl
+        variant="outlined"
+        error={formik.touched.password && Boolean(formik.errors.password)}
+      >
         <InputLabel>Password</InputLabel>
         <OutlinedInput
           type={showPassword ? "text" : "password"}
@@ -87,14 +103,14 @@ const LoginPage = () => {
           <FormHelperText>{formik.errors.password}</FormHelperText>
         )}
       </FormControl>
- 
+
       <Button type="submit" variant="contained" disabled={formik.isSubmitting}>
         {formik.isSubmitting ? "Logging in..." : "Login"}
       </Button>
 
       <Divider />
       <Typography variant="caption">Don't have an account?</Typography>
-      <Button type="submit" onClick={() => navigate(appPaths.register)} variant="outlined">
+      <Button onClick={() => navigate(appPaths.register)} variant="outlined">
         Create an account
       </Button>
     </Stack>

@@ -66,7 +66,7 @@ class LoginView(APIView):
                 'tokens': tokens
             })
         else:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Logout View
