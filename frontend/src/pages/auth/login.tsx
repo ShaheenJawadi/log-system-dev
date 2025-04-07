@@ -10,6 +10,8 @@ import {
   Stack,
   Typography,
   FormHelperText,
+  Box,
+  Tooltip,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
@@ -19,7 +21,7 @@ import { appPaths } from "../../routes/paths";
 import * as authService from "../../services/authServices";
 import { setToken, setRefreshToken, getToken } from "../../utils/token";
 import { toast } from "react-toastify";
-
+import { ContentPaste } from "@mui/icons-material";
 const LoginPage = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -41,15 +43,14 @@ const LoginPage = () => {
       try {
         const res = await authService.login(values);
         setToken(res.tokens.access);
-        setRefreshToken(res?.tokens?.refresh || '');
+        setRefreshToken(res?.tokens?.refresh || "");
         window.location.href = appPaths.home;
-      } catch (error) { 
+      } catch (error) {
         toast.error("Login failed! Please check your credentials.");
       } finally {
         setSubmitting(false);
       }
-    }
-    
+    },
   });
 
   return (
@@ -61,6 +62,32 @@ const LoginPage = () => {
         formik.handleSubmit(e);
       }}
     >
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        p={2}
+        border="1px solid #ccc"
+        borderRadius={2}
+        bgcolor="#f5f5f5"
+      >
+        <Typography variant="body2">
+          <strong>Demo Account:</strong> demo / 12345678
+        </Typography>
+        <Tooltip title="Fill with demo credentials">
+          <IconButton
+            onClick={() => {
+              formik.setValues({
+                username: "demo",
+                password: "12345678",
+              });
+            }}
+            size="small"
+          >
+            <ContentPaste fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
       <FormControl
         variant="outlined"
         error={formik.touched.username && Boolean(formik.errors.username)}
