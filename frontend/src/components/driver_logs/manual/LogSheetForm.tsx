@@ -78,7 +78,7 @@ const LogSheetForm: React.FC<LogSheetFormProps> = ({
       terminalAddress: initialData.terminalAddress || null,
       manifestNumber: initialData.manifestNumber || null,
       shipperCommodity: initialData.shipperCommodity || null,
-      date: initialData.date || moment().format("YYYY-MM-DD"),
+      date:  moment(initialData.date ).format("YYYY-MM-DD")|| moment().format("YYYY-MM-DD"),
       fromLocation: initialData.fromLocation || null,
       toLocation: initialData.toLocation || null,
       OnDutyHoursToday: initialData.OnDutyHoursToday || null,
