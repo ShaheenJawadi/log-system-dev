@@ -20,6 +20,7 @@ import {
   OutlinedInput,
   FormHelperText,
   IconButton,
+  Card,
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
@@ -51,6 +52,10 @@ const StyledBoxContainer = styled(Box)(({ theme }) => ({
 const TripDetails: React.FC = () => {
   const { isDispayData } = useMapUtils();
 
+  const liveDomains = [
+    "log-system-dev.vercel.app",
+    "your-app-name.onrender.com",
+  ];
   return (
     <StyledBoxContainer>
       {isDispayData ? <DisplayTripDetails /> : <TripDetailsForm />}
@@ -58,7 +63,8 @@ const TripDetails: React.FC = () => {
   );
 };
 const TripDetailsForm: React.FC = () => {
-  const { isFormValid, updateTripRequest, generateRoute ,loading} = useMapUtils();
+  const { isFormValid, updateTripRequest, generateRoute, loading } =
+    useMapUtils();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<TripLocation[]>([]);
 
@@ -146,10 +152,7 @@ const TripDetailsForm: React.FC = () => {
           type="number"
           defaultValue={0}
           onChange={(e) =>
-            updateTripRequest(
-              "current_cycle_hours",
-              parseFloat(e.target.value)
-            )
+            updateTripRequest("current_cycle_hours", parseFloat(e.target.value))
           }
           label="Current Cycle Used (Hrs)"
           startAdornment={
@@ -163,7 +166,7 @@ const TripDetailsForm: React.FC = () => {
       <FormControl sx={{ ...inputBoxing }} variant="outlined">
         <InputLabel>Average driving speed </InputLabel>
         <OutlinedInput
-        defaultValue={55}
+          defaultValue={55}
           type="number"
           onChange={(e) =>
             updateTripRequest("average_speed", parseFloat(e.target.value))
@@ -190,10 +193,10 @@ const TripDetailsForm: React.FC = () => {
           }
         />
       </FormControl>
+      <LiveServerNotice />
 
       <Button
         startIcon={<AutoFixHighIcon />}
-     
         onClick={() => generateRoute()}
         size="large"
         variant="contained"
@@ -251,7 +254,7 @@ const DisplayTripDetails: React.FC = () => {
         <Stack direction={"row"} spacing={2}>
           <Typography variant="body1">Average Driving speed : </Typography>
           <Typography fontSize={18} fontWeight={600}>
-          {tripData?.average_speed} mph
+            {tripData?.average_speed} mph
           </Typography>
         </Stack>
         <Button
@@ -371,4 +374,23 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   );
 };
 
+const LiveServerNotice = () => {
+  const isLiveServer = window.location.hostname === "log-system-dev.vercel.app";
+
+  if (!isLiveServer) return null;
+
+  return (
+    <Card sx={{ padding: 2, backgroundColor: "#0000005e", color: "#fff" }}>
+      <Typography fontSize={18} fontWeight={600} color="warning" variant="h5">
+        ⚠️ Notice
+      </Typography>
+      <Typography variant="body1" fontSize={14} fontWeight={600}>
+        This app’s backend is hosted on Render’s free plan, which may cause
+        issues like out-of-memory errors, especially for long trips. For the
+        full experience, I recommend testing it locally. Thank you for your
+        understanding!
+      </Typography>
+    </Card>
+  );
+};
 export default TripDetails;
