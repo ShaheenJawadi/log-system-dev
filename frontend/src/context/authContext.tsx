@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const wakeUpTimeout = setTimeout(() => { 
           setServerSleep(true);
  
-        }, 4000);
+        }, 2500);
         try {
           const response = await authService.me({ access: authToken });
           
