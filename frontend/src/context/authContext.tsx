@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { User } from "../types/auth";
 import { getRefreshToken, getToken, removeToken, setToken } from "../utils/token";
 import { appPaths } from "../routes/paths";
+import ServerStatus from "../components/ServerStatus";
 
 const AuthContext = createContext<{
   authToken: string | null;
@@ -24,19 +25,29 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authToken, setAuthToken] = useState(getToken() || null);
   const [user, setUser] = useState<User | null>(null);
+  const [isServerSleep, setServerSleep] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       if (authToken) {
+        const wakeUpTimeout = setTimeout(() => { 
+          setServerSleep(true);
+ 
+        }, 4000);
         try {
           const response = await authService.me({ access: authToken });
+          
           setUser(response.user);
-        } catch {
+        } catch { 
           setAuthToken(null);
           setUser(null);
           removeToken();
           navigate(appPaths.login);
+        }finally {
+          clearTimeout(wakeUpTimeout);
+          setServerSleep(false);
         }
       } else {
         setUser(null);
@@ -67,6 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ authToken, user, login, logout }}>
+      <ServerStatus isServerSleep={isServerSleep} />
       {children}
     </AuthContext.Provider>
   );
