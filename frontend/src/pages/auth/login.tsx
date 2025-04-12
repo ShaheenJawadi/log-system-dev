@@ -22,7 +22,9 @@ import * as authService from "../../services/authServices";
 import { setToken, setRefreshToken, getToken } from "../../utils/token";
 import { toast } from "react-toastify";
 import { ContentPaste } from "@mui/icons-material";
+import { useAuth } from "../../context/authContext";
 const LoginPage = () => {
+  const { setSubmittingAuth } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -40,6 +42,7 @@ const LoginPage = () => {
         .required("Password is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
+      setSubmittingAuth(true);
       try {
         const res = await authService.login(values);
         setToken(res.tokens.access);
@@ -48,6 +51,7 @@ const LoginPage = () => {
       } catch (error) {
         toast.error("Login failed! Please check your credentials.");
       } finally {
+        setSubmittingAuth(false);
         setSubmitting(false);
       }
     },

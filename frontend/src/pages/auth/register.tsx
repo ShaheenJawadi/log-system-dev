@@ -18,10 +18,12 @@ import * as Yup from "yup";
 import { appPaths } from "../../routes/paths"; 
 import * as authService from "../../services/authServices";  
 import { toast } from "react-toastify";
+import { useAuth } from "../../context/authContext";
 
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+   const { setSubmittingAuth } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -48,6 +50,7 @@ const RegisterPage = () => {
         .required("Confirm password is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
+      setSubmittingAuth(true);
       try {
         const response = await authService.register(values);  
         console.log("Registration successful", response);
@@ -57,6 +60,7 @@ const RegisterPage = () => {
          toast.error("Registration failed! Please try again."); 
       } finally {
         setSubmitting(false);
+        setSubmittingAuth(false);
       }
     },
   });

@@ -1,19 +1,33 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import * as authService from "../services/authServices";
 
 import { ReactNode } from "react";
 import { User } from "../types/auth";
-import { getRefreshToken, getToken, removeToken, setToken } from "../utils/token";
+import {
+  getRefreshToken,
+  getToken,
+  removeToken,
+  setToken,
+} from "../utils/token";
 import { appPaths } from "../routes/paths";
 import ServerStatus from "../components/ServerStatus";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext<{
   authToken: string | null;
   user: User | null;
   login: (token: string) => void;
   logout: () => void;
+  setSubmittingAuth:  (isSubmitting: boolean) => void;
 }>({
+  setSubmittingAuth: () => {},
   authToken: null,
   user: null,
   login: (token: string) => {},
@@ -26,26 +40,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authToken, setAuthToken] = useState(getToken() || null);
   const [user, setUser] = useState<User | null>(null);
   const [isServerSleep, setServerSleep] = useState<boolean>(false);
+  const [isSubmittingAuth, setSubmittingAuth] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       if (authToken) {
-        const wakeUpTimeout = setTimeout(() => { 
+        const wakeUpTimeout = setTimeout(() => {
           setServerSleep(true);
- 
         }, 2500);
         try {
           const response = await authService.me({ access: authToken });
-          
+
           setUser(response.user);
-        } catch { 
+        } catch {
           setAuthToken(null);
           setUser(null);
           removeToken();
           navigate(appPaths.login);
-        }finally {
+        } finally {
           clearTimeout(wakeUpTimeout);
           setServerSleep(false);
         }
@@ -63,7 +77,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    
     try {
       await authService.logout();
 
@@ -75,9 +88,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("logout failed", error);
     }
   };
+  const toastIdRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    if (isSubmittingAuth) {
+      if (!toast.isActive(toastIdRef.current as string | number)) {
+        toastIdRef.current = toast.warning(
+          "⏳ Since this demo is hosted on Render’s free tier, it may take a few extra seconds to respond if it's waking up.",
+          { autoClose: false }
+        );
+      }
+    } else {
+      if (toastIdRef.current) {
+        toast.dismiss(toastIdRef.current);
+        toastIdRef.current = null;
+      }
+    }
+  }, [isSubmittingAuth]);
+
 
   return (
-    <AuthContext.Provider value={{ authToken, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ authToken, user, login, logout, setSubmittingAuth }}
+    >
       <ServerStatus isServerSleep={isServerSleep} />
       {children}
     </AuthContext.Provider>
