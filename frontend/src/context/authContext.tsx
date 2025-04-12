@@ -19,6 +19,7 @@ import {
 import { appPaths } from "../routes/paths";
 import ServerStatus from "../components/ServerStatus";
 import { toast } from "react-toastify";
+import { isHosted } from "../utils/checkHost";
 
 const AuthContext = createContext<{
   authToken: string | null;
@@ -92,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (isSubmittingAuth) {
-      if (!toast.isActive(toastIdRef.current as string | number)) {
+      if (!toast.isActive(toastIdRef.current as string | number) && isHosted()) {
         toastIdRef.current = toast.warning(
           "⏳ Since this demo is hosted on Render’s free tier, it may take a few extra seconds to respond if it's waking up.",
           { autoClose: false }
@@ -111,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{ authToken, user, login, logout, setSubmittingAuth }}
     >
-      <ServerStatus isServerSleep={isServerSleep} />
+      <ServerStatus isServerSleep={isServerSleep && isHosted()} />
       {children}
     </AuthContext.Provider>
   );

@@ -34,6 +34,7 @@ import { TripRequestField, useMapUtils } from "../../context/mapContext";
 import { transparentColor } from "../../utils/constatnts";
 import { useNavigate } from "react-router-dom";
 import { appPaths } from "../../routes/paths";
+import { isHosted } from "../../utils/checkHost";
 
 const StyledBoxContainer = styled(Box)(({ theme }) => ({
   backgroundColor: alpha(transparentColor, 0.4),
@@ -375,9 +376,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
 };
 
 const LiveServerNotice = () => {
-  const isLiveServer = window.location.hostname === "log-system-dev.vercel.app";
-
-  if (!isLiveServer) return null;
+ 
+  if (!isHosted()) return null;
 
   return (
     <Card sx={{ padding: 2, backgroundColor: "#0000005e", color: "#fff" }}>
